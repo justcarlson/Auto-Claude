@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { AppSettings } from '../../shared/types';
 import { DEFAULT_APP_SETTINGS } from '../../shared/constants';
+import { getAPIClient, isWebMode } from '../lib/api';
 
 interface SettingsState {
   settings: AppSettings;
@@ -59,25 +60,28 @@ function migrateOnboardingCompleted(settings: AppSettings): AppSettings {
   return { ...settings, onboardingCompleted: false };
 }
 
-/**
- * Load settings from main process
- */
 export async function loadSettings(): Promise<void> {
   const store = useSettingsStore.getState();
   store.setLoading(true);
 
   try {
-    const result = await window.electronAPI.getSettings();
-    if (result.success && result.data) {
-      // Apply migration for onboardingCompleted flag
-      const migratedSettings = migrateOnboardingCompleted(result.data);
-      store.setSettings(migratedSettings);
+    if (isWebMode()) {
+      const api = getAPIClient();
+      const result = await api.getSettings() as { success: boolean; data?: AppSettings; error?: string };
+      if (result.success && result.data) {
+        store.setSettings(result.data);
+      }
+    } else {
+      const result = await window.electronAPI.getSettings();
+      if (result.success && result.data) {
+        const migratedSettings = migrateOnboardingCompleted(result.data);
+        store.setSettings(migratedSettings);
 
-      // If migration changed the settings, persist them
-      if (migratedSettings.onboardingCompleted !== result.data.onboardingCompleted) {
-        await window.electronAPI.saveSettings({
-          onboardingCompleted: migratedSettings.onboardingCompleted
-        });
+        if (migratedSettings.onboardingCompleted !== result.data.onboardingCompleted) {
+          await window.electronAPI.saveSettings({
+            onboardingCompleted: migratedSettings.onboardingCompleted
+          });
+        }
       }
     }
   } catch (error) {
@@ -87,19 +91,26 @@ export async function loadSettings(): Promise<void> {
   }
 }
 
-/**
- * Save settings to main process
- */
 export async function saveSettings(updates: Partial<AppSettings>): Promise<boolean> {
   const store = useSettingsStore.getState();
 
   try {
-    const result = await window.electronAPI.saveSettings(updates);
-    if (result.success) {
-      store.updateSettings(updates);
-      return true;
+    if (isWebMode()) {
+      const api = getAPIClient();
+      const result = await api.saveSettings(updates);
+      if (result.success) {
+        store.updateSettings(updates);
+        return true;
+      }
+      return false;
+    } else {
+      const result = await window.electronAPI.saveSettings(updates);
+      if (result.success) {
+        store.updateSettings(updates);
+        return true;
+      }
+      return false;
     }
-    return false;
   } catch {
     return false;
   }

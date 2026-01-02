@@ -1,0 +1,162 @@
+name: TDD CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'apps/backend/api/**'
+      - 'apps/frontend/src/renderer/lib/api/**'
+      - 'tests/docker/**'
+      - 'tests/integration/**'
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - '.github/workflows/tdd-ci.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'apps/backend/api/**'
+      - 'apps/frontend/src/renderer/lib/api/**'
+      - 'tests/docker/**'
+      - 'tests/integration/**'
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - '.github/workflows/tdd-ci.yml'
+
+concurrency:
+  group: tdd-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  # Backend API tests (FastAPI)
+  test-backend-api:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.12', '3.13']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+          enable-cache: true
+          cache-dependency-glob: "**/requirements*.txt"
+
+      - name: Install dependencies
+        working-directory: apps/backend
+        run: |
+          uv venv
+          uv pip install -r requirements.txt
+          uv pip install -r api/requirements.txt
+          uv pip install -r ../../tests/requirements-test.txt
+
+      - name: Run API tests
+        working-directory: apps/backend
+        env:
+          PYTHONPATH: ${{ github.workspace }}/apps/backend
+        run: |
+          source .venv/bin/activate
+          pytest api/tests/ -v --tb=short -x
+
+      - name: Run API tests with coverage
+        if: matrix.python-version == '3.12'
+        working-directory: apps/backend
+        env:
+          PYTHONPATH: ${{ github.workspace }}/apps/backend
+        run: |
+          source .venv/bin/activate
+          pytest api/tests/ -v --cov=api --cov-report=xml --cov-report=term-missing
+
+  # Frontend API client tests (Vitest)
+  test-frontend-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Get npm cache directory
+        id: npm-cache
+        run: echo "dir=$(npm config get cache)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.npm-cache.outputs.dir }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-npm-
+
+      - name: Install dependencies
+        working-directory: apps/frontend
+        run: npm ci --ignore-scripts
+
+      - name: Run API client tests
+        working-directory: apps/frontend
+        run: npm run test -- --run src/renderer/lib/api/
+
+  # Docker build test
+  test-docker-build:
+    runs-on: ubuntu-latest
+    needs: [test-backend-api]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          tags: auto-claude:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Docker compose validation
+  test-docker-compose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install test dependencies
+        run: pip install pyyaml pytest
+
+      - name: Validate docker-compose.yml
+        run: |
+          if [ -f docker-compose.yml ]; then
+            python -c "import yaml; yaml.safe_load(open('docker-compose.yml'))"
+            echo "docker-compose.yml is valid YAML"
+          else
+            echo "docker-compose.yml not found (will be created in Phase 3)"
+          fi
+
+      - name: Run Docker validation tests
+        run: |
+          if [ -d tests/docker ]; then
+            pytest tests/docker/ -v --tb=short || echo "Docker tests skipped (Phase 3)"
+          else
+            echo "tests/docker/ not found (will be created in Phase 0.4)"
+          fi

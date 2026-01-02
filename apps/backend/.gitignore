@@ -59,8 +59,9 @@ Thumbs.db
 .claude_settings.json
 .auto-build-security.json
 
-# Tests (development only)
+# Tests (development only, except api/tests which has TDD tests)
 tests/
+!api/tests/
 
 # Auto Claude data directory
 .auto-claude/

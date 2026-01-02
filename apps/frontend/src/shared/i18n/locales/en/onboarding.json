@@ -32,7 +32,11 @@
     "title": "Claude Authentication",
     "description": "Connect your Claude account to enable AI features",
     "keychainTitle": "Secure Storage",
-    "keychainDescription": "Your tokens are encrypted using your system's keychain. You may see a password prompt from macOS — click \"Always Allow\" to avoid seeing it again."
+    "keychainDescription": "Your tokens are encrypted using your system's keychain. You may see a password prompt from macOS — click \"Always Allow\" to avoid seeing it again.",
+    "webMode": {
+      "title": "Web Mode Detected",
+      "description": "Claude authentication is configured via environment variables in web/Docker mode. Set <code>CLAUDE_CODE_OAUTH_TOKEN</code> in your Docker environment."
+    }
   },
   "memory": {
     "title": "Memory",
@@ -133,6 +137,24 @@
       "description": "Ollama is installed but not running. Start Ollama to use local embedding models.",
       "retry": "Retry",
       "fallbackNote": "Memory will still work with keyword search even without embeddings."
+    },
+    "webMode": {
+      "title": "Web Mode - External Ollama Required",
+      "description": "In Docker/web mode, Ollama must run externally. Configure your Ollama instance:",
+      "instructions": {
+        "serve": "Run Ollama on host:",
+        "sidecar": "Or use a sidecar container with Ollama image",
+        "envVar": "Set <code>OLLAMA_BASE_URL</code> env var"
+      },
+      "config": {
+        "title": "Embedding Model Configuration",
+        "modelName": "Model Name",
+        "dimensions": "Dimensions",
+        "commonModels": "Common models: nomic-embed-text (768), embeddinggemma (768), mxbai-embed-large (1024)",
+        "apply": "Apply",
+        "selected": "Selected:",
+        "pullHint": "Ensure your Ollama instance has the model installed:"
+      }
     }
   }
 }
