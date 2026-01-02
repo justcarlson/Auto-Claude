@@ -5,10 +5,9 @@ Tasks API Endpoints
 CRUD operations for task management within projects.
 """
 
-from fastapi import APIRouter, HTTPException, Response, status
-
 from api.models import Task, TaskCreate, TaskUpdate
 from api.services import ProjectService, TaskService
+from fastapi import APIRouter, HTTPException, Response, status
 
 router = APIRouter(prefix="/api/projects/{project_id}/tasks", tags=["tasks"])
 

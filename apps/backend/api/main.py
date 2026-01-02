@@ -8,12 +8,11 @@ Provides REST and WebSocket endpoints for the React frontend.
 
 import os
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-
 from api.routes import health_router, projects_router, tasks_router
 from api.services import ProjectService, TaskService
-from api.websocket.terminal import terminal_websocket, reset_terminal_manager
+from api.websocket.terminal import reset_terminal_manager, terminal_websocket
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 
 def get_cors_origins() -> list[str]:

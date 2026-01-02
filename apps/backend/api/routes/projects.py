@@ -5,10 +5,9 @@ Projects API Endpoints
 CRUD operations for project management.
 """
 
-from fastapi import APIRouter, HTTPException, Response, status
-
 from api.models import Project, ProjectCreate
 from api.services import ProjectService
+from fastapi import APIRouter, HTTPException, Response, status
 
 router = APIRouter(prefix="/api/projects", tags=["projects"])
 

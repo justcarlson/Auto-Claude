@@ -14,7 +14,6 @@ TDD tests for task management endpoints (nested under projects):
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-
 # =============================================================================
 # HELPER: Create project for task tests
 # =============================================================================

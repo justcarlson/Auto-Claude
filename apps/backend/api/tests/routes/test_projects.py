@@ -13,7 +13,6 @@ TDD tests for project management endpoints:
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-
 # =============================================================================
 # LIST PROJECTS
 # =============================================================================

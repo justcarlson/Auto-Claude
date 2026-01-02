@@ -9,9 +9,8 @@ Manages terminal lifecycle: create on connect, destroy on disconnect.
 import asyncio
 import json
 
-from fastapi import WebSocket, WebSocketDisconnect
-
 from api.services.terminal_service import TerminalManager
+from fastapi import WebSocket, WebSocketDisconnect
 
 # Singleton terminal manager for all WebSocket connections
 _terminal_manager: TerminalManager | None = None

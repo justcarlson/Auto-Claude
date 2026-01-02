@@ -52,6 +52,7 @@ async def test_health_is_fast():
     Should: Respond within 100ms (fast health check)
     """
     import time
+
     from api.main import app
 
     async with AsyncClient(

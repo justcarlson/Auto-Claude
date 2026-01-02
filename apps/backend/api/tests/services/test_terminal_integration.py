@@ -9,7 +9,6 @@ Marked with @pytest.mark.integration to skip in fast test runs.
 
 import pytest
 
-
 # =============================================================================
 # TERMINAL SPAWNING
 # =============================================================================

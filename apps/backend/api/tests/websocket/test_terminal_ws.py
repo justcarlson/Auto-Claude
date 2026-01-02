@@ -6,15 +6,14 @@ Tests for the terminal WebSocket endpoint that bridges
 browser connections to PTY sessions.
 """
 
-import time
 import threading
-from typing import List, Optional
+import time
 
 import pytest
 from starlette.testclient import TestClient
 
 
-def receive_with_timeout(ws, timeout: float = 2.0) -> Optional[dict]:
+def receive_with_timeout(ws, timeout: float = 2.0) -> dict | None:
     """
     Receive JSON from WebSocket with timeout.
 
@@ -44,7 +43,7 @@ def receive_with_timeout(ws, timeout: float = 2.0) -> Optional[dict]:
 
 def collect_output_until(
     ws, marker: str, max_messages: int = 50, timeout: float = 5.0
-) -> List[str]:
+) -> list[str]:
     """
     Collect output messages until marker is found or timeout/max reached.
 
