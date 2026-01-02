@@ -8,14 +8,13 @@ Manages terminal lifecycle: create on connect, destroy on disconnect.
 
 import asyncio
 import json
-from typing import Optional
 
 from fastapi import WebSocket, WebSocketDisconnect
 
 from api.services.terminal_service import TerminalManager
 
 # Singleton terminal manager for all WebSocket connections
-_terminal_manager: Optional[TerminalManager] = None
+_terminal_manager: TerminalManager | None = None
 
 
 def get_terminal_manager() -> TerminalManager:
@@ -56,7 +55,7 @@ async def terminal_websocket(websocket: WebSocket, terminal_id: str):
     await websocket.accept()
 
     manager = get_terminal_manager()
-    internal_terminal_id: Optional[str] = None
+    internal_terminal_id: str | None = None
 
     try:
         # Create terminal for this connection

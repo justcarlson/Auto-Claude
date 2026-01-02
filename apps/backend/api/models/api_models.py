@@ -6,7 +6,7 @@ Pydantic models for request/response validation.
 """
 
 from datetime import datetime
-from typing import Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -45,9 +45,9 @@ class TaskCreate(BaseModel):
 class TaskUpdate(BaseModel):
     """Request model for updating a task."""
 
-    title: Optional[str] = None
-    description: Optional[str] = None
-    status: Optional[str] = None
+    title: str | None = None
+    description: str | None = None
+    status: str | None = None
 
 
 class Task(BaseModel):
@@ -58,6 +58,6 @@ class Task(BaseModel):
     title: str
     description: str
     status: str = Field(default="pending")
-    spec_path: Optional[str] = None
+    spec_path: str | None = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)

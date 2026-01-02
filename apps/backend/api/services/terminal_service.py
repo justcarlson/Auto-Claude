@@ -11,8 +11,8 @@ import json
 import os
 import re
 import uuid
-from dataclasses import dataclass, field
-from typing import AsyncGenerator, Optional
+from collections.abc import AsyncGenerator
+from dataclasses import dataclass
 
 import ptyprocess
 
@@ -28,8 +28,8 @@ class TerminalMessage:
 
     type: str  # "input", "output", "resize", "error", "connected"
     data: str = ""
-    cols: Optional[int] = None
-    rows: Optional[int] = None
+    cols: int | None = None
+    rows: int | None = None
 
 
 @dataclass

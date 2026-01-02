@@ -17,6 +17,7 @@ import type { APIClient } from './types';
 export function isWebMode(): boolean {
   // IS_WEB is only true in production web builds (Docker/Dokploy)
   // It's NOT set in Electron or browser-mock development
+  // @ts-expect-error - IS_WEB is defined by vite.web.config.ts
   return import.meta.env.IS_WEB === true || import.meta.env.IS_WEB === 'true';
 }
 
@@ -36,15 +37,16 @@ function isElectron(): boolean {
 
 /**
  * Create an API client for the current environment.
- * 
- * @returns Promise<APIClient> instance (ElectronAPIClient or WebAPIClient)
+ * Uses synchronous require to avoid async initialization complexity.
  */
-export async function createAPIClient(): Promise<APIClient> {
+export function createAPIClient(): APIClient {
   if (isElectron()) {
-    const { ElectronAPIClient } = await import('./electron-client');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { ElectronAPIClient } = require('./electron-client');
     return new ElectronAPIClient();
   } else {
-    const { WebAPIClient } = await import('./web-client');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { WebAPIClient } = require('./web-client');
     return new WebAPIClient();
   }
 }

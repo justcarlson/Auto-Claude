@@ -10,7 +10,6 @@ import os
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 from api.models import Project
 
@@ -23,7 +22,7 @@ class ProjectService:
     TODO: Persist to /data/projects.json in production.
     """
 
-    _instance: Optional["ProjectService"] = None
+    _instance: "ProjectService | None" = None
 
     def __init__(self):
         self._projects: dict[str, Project] = {}
@@ -44,11 +43,11 @@ class ProjectService:
         """List all projects."""
         return list(self._projects.values())
 
-    def get_project(self, project_id: str) -> Optional[Project]:
+    def get_project(self, project_id: str) -> Project | None:
         """Get project by ID."""
         return self._projects.get(project_id)
 
-    def get_project_by_path(self, path: str) -> Optional[Project]:
+    def get_project_by_path(self, path: str) -> Project | None:
         """Get project by path."""
         normalized = os.path.normpath(path)
         for project in self._projects.values():

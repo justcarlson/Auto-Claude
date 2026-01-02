@@ -8,7 +8,6 @@ Tasks are nested under projects.
 
 import uuid
 from datetime import datetime
-from typing import Optional
 
 from api.models import Task, TaskCreate, TaskUpdate
 
@@ -21,7 +20,7 @@ class TaskService:
     TODO: Persist to /data/projects/{id}/tasks.json in production.
     """
 
-    _instance: Optional["TaskService"] = None
+    _instance: "TaskService | None" = None
 
     def __init__(self):
         # Tasks stored by project_id -> task_id -> Task
@@ -50,7 +49,7 @@ class TaskService:
         project_tasks = self._tasks.get(project_id, {})
         return list(project_tasks.values())
 
-    def get_task(self, project_id: str, task_id: str) -> Optional[Task]:
+    def get_task(self, project_id: str, task_id: str) -> Task | None:
         """Get task by ID within a project."""
         project_tasks = self._tasks.get(project_id, {})
         return project_tasks.get(task_id)
@@ -83,7 +82,7 @@ class TaskService:
 
     def update_task(
         self, project_id: str, task_id: str, data: TaskUpdate
-    ) -> Optional[Task]:
+    ) -> Task | None:
         """
         Update a task.
 

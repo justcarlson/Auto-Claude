@@ -22,3 +22,6 @@ coverage>=7.0.0
 # Type checking (for running mypy on tests)
 mypy>=1.0.0
 types-toml>=0.10.0
+
+# For Docker/YAML validation tests
+pyyaml>=6.0
