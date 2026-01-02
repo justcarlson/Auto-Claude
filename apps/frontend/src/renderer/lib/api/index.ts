@@ -8,7 +8,7 @@
  * - Web app in Docker/Dokploy (using REST + WebSocket)
  */
 
-import { createAPIClient, isWebMode } from './client';
+import { createAPIClient } from './client';
 import type { APIClient } from './types';
 
 // Re-export types and client factory

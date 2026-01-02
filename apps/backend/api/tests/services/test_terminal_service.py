@@ -7,8 +7,6 @@ Pure function tests for terminal service utilities.
 Fast tests (no real PTY spawning).
 """
 
-import pytest
-
 # =============================================================================
 # ANSI STRIPPING
 # =============================================================================

@@ -93,7 +93,7 @@ async def terminal_websocket(websocket: WebSocket, terminal_id: str):
             try:
                 await output_task
             except asyncio.CancelledError:
-                pass
+                pass  # Expected when client disconnects - task cleanup is intentional
 
     finally:
         # Cleanup terminal on disconnect

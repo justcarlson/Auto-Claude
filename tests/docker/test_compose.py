@@ -7,7 +7,6 @@ Validates docker-compose.yml structure for Dokploy deployment.
 These tests run without Docker - they validate the YAML structure.
 """
 
-import os
 from pathlib import Path
 
 import pytest

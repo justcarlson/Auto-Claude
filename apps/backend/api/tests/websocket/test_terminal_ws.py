@@ -9,7 +9,6 @@ browser connections to PTY sessions.
 import threading
 import time
 
-import pytest
 from starlette.testclient import TestClient
 
 
