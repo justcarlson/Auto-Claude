@@ -32,7 +32,11 @@
     "title": "Authentification Claude",
     "description": "Connectez votre compte Claude pour activer les fonctionnalités IA",
     "keychainTitle": "Stockage sécurisé",
-    "keychainDescription": "Vos jetons sont chiffrés à l'aide du trousseau de clés de votre système. Une demande de mot de passe macOS peut apparaître — cliquez sur « Toujours autoriser » pour ne plus la revoir."
+    "keychainDescription": "Vos jetons sont chiffrés à l'aide du trousseau de clés de votre système. Une demande de mot de passe macOS peut apparaître — cliquez sur « Toujours autoriser » pour ne plus la revoir.",
+    "webMode": {
+      "title": "Mode Web détecté",
+      "description": "L'authentification Claude est configurée via les variables d'environnement en mode web/Docker. Définissez <code>CLAUDE_CODE_OAUTH_TOKEN</code> dans votre environnement Docker."
+    }
   },
   "memory": {
     "title": "Mémoire",
@@ -133,6 +137,24 @@
       "description": "Ollama est installé mais non démarré. Lancez Ollama pour utiliser les modèles d'embeddings locaux.",
       "retry": "Réessayer",
       "fallbackNote": "La mémoire fonctionnera toujours avec la recherche par mots-clés même sans embeddings."
+    },
+    "webMode": {
+      "title": "Mode Web - Ollama externe requis",
+      "description": "En mode Docker/web, Ollama doit fonctionner en externe. Configurez votre instance Ollama :",
+      "instructions": {
+        "serve": "Exécutez Ollama sur l'hôte :",
+        "sidecar": "Ou utilisez un conteneur sidecar avec l'image Ollama",
+        "envVar": "Définissez la variable d'environnement <code>OLLAMA_BASE_URL</code>"
+      },
+      "config": {
+        "title": "Configuration du modèle d'embeddings",
+        "modelName": "Nom du modèle",
+        "dimensions": "Dimensions",
+        "commonModels": "Modèles courants : nomic-embed-text (768), embeddinggemma (768), mxbai-embed-large (1024)",
+        "apply": "Appliquer",
+        "selected": "Sélectionné :",
+        "pullHint": "Assurez-vous que votre instance Ollama a le modèle installé :"
+      }
     }
   }
 }

@@ -312,15 +312,15 @@ export function OllamaModelSelector({
             <Globe className="h-5 w-5 text-info shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-sm font-medium text-foreground">
-                Web Mode - External Ollama Required
+                {t('ollama.webMode.title')}
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                In Docker/web mode, Ollama must run externally. Configure your Ollama instance:
+                {t('ollama.webMode.description')}
               </p>
               <ul className="text-xs text-muted-foreground mt-2 space-y-1 list-disc list-inside">
-                <li>Run Ollama on host: <code className="px-1 py-0.5 bg-muted rounded">ollama serve</code></li>
-                <li>Or use a sidecar container with Ollama image</li>
-                <li>Set <code className="px-1 py-0.5 bg-muted rounded">OLLAMA_BASE_URL</code> env var</li>
+                <li>{t('ollama.webMode.instructions.serve')} <code className="px-1 py-0.5 bg-muted rounded">ollama serve</code></li>
+                <li>{t('ollama.webMode.instructions.sidecar')}</li>
+                <li dangerouslySetInnerHTML={{ __html: t('ollama.webMode.instructions.envVar') }} />
               </ul>
             </div>
           </div>
@@ -329,13 +329,13 @@ export function OllamaModelSelector({
         <div className="space-y-3 p-4 rounded-lg border border-border bg-muted/30">
           <div className="flex items-center gap-2">
             <Server className="h-4 w-4 text-muted-foreground" />
-            <Label className="text-sm font-medium">Embedding Model Configuration</Label>
+            <Label className="text-sm font-medium">{t('ollama.webMode.config.title')}</Label>
           </div>
           
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label htmlFor="web-model-name" className="text-xs text-muted-foreground">
-                Model Name
+                {t('ollama.webMode.config.modelName')}
               </Label>
               <Input
                 id="web-model-name"
@@ -348,7 +348,7 @@ export function OllamaModelSelector({
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="web-model-dim" className="text-xs text-muted-foreground">
-                Dimensions
+                {t('ollama.webMode.config.dimensions')}
               </Label>
               <Input
                 id="web-model-dim"
@@ -364,7 +364,7 @@ export function OllamaModelSelector({
 
           <div className="flex items-center justify-between pt-2">
             <p className="text-xs text-muted-foreground">
-              Common models: nomic-embed-text (768), embeddinggemma (768), mxbai-embed-large (1024)
+              {t('ollama.webMode.config.commonModels')}
             </p>
             <Button
               size="sm"
@@ -372,7 +372,7 @@ export function OllamaModelSelector({
               disabled={disabled || !webModelName.trim()}
             >
               <Check className="h-3.5 w-3.5 mr-1.5" />
-              Apply
+              {t('ollama.webMode.config.apply')}
             </Button>
           </div>
         </div>
@@ -381,13 +381,13 @@ export function OllamaModelSelector({
           <div className="flex items-center gap-2 p-2 rounded-md bg-success/10 border border-success/30">
             <Check className="h-4 w-4 text-success" />
             <span className="text-sm text-success">
-              Selected: {selectedModel}
+              {t('ollama.webMode.config.selected')} {selectedModel}
             </span>
           </div>
         )}
 
         <p className="text-xs text-muted-foreground">
-          Ensure your Ollama instance has the model installed: <code className="px-1 py-0.5 bg-muted rounded">ollama pull {webModelName}</code>
+          {t('ollama.webMode.config.pullHint')} <code className="px-1 py-0.5 bg-muted rounded">ollama pull {webModelName}</code>
         </p>
       </div>
     );

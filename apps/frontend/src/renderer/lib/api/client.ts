@@ -37,15 +37,14 @@ function isElectron(): boolean {
 /**
  * Create an API client for the current environment.
  * 
- * @returns APIClient instance (ElectronAPIClient or WebAPIClient)
+ * @returns Promise<APIClient> instance (ElectronAPIClient or WebAPIClient)
  */
-export function createAPIClient(): APIClient {
+export async function createAPIClient(): Promise<APIClient> {
   if (isElectron()) {
-    // Dynamic import to avoid bundling issues
-    const { ElectronAPIClient } = require('./electron-client');
+    const { ElectronAPIClient } = await import('./electron-client');
     return new ElectronAPIClient();
   } else {
-    const { WebAPIClient } = require('./web-client');
+    const { WebAPIClient } = await import('./web-client');
     return new WebAPIClient();
   }
 }

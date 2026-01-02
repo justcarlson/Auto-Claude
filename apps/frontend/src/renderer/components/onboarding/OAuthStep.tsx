@@ -314,12 +314,12 @@ export function OAuthStep({ onNext, onBack, onSkip }: OAuthStepProps) {
                   <Globe className="h-5 w-5 text-info shrink-0 mt-0.5" />
                   <div className="flex-1">
                     <p className="text-sm font-medium text-foreground mb-1">
-                      Web Mode Detected
+                      {t('oauth.webMode.title')}
                     </p>
-                    <p className="text-sm text-muted-foreground">
-                      Claude authentication is configured via environment variables in web/Docker mode.
-                      Set <code className="px-1 py-0.5 bg-muted rounded font-mono text-xs">CLAUDE_CODE_OAUTH_TOKEN</code> in your Docker environment.
-                    </p>
+                    <p 
+                      className="text-sm text-muted-foreground"
+                      dangerouslySetInnerHTML={{ __html: t('oauth.webMode.description') }}
+                    />
                   </div>
                 </div>
               </CardContent>
