@@ -4,58 +4,41 @@ WebSocket Terminal Handler Tests
 
 Tests for the terminal WebSocket endpoint that bridges
 browser connections to PTY sessions.
+
+NOTE: These tests use bounded iteration to avoid CI hangs.
+The PTY operations use executor threads that can orphan if reads block.
+We use pytest.mark.timeout to fail fast instead of waiting 300s for cleanup.
 """
 
-import threading
 import time
 
+import pytest
 from starlette.testclient import TestClient
 
 
-def receive_with_timeout(ws, timeout: float = 2.0) -> dict | None:
-    """
-    Receive JSON from WebSocket with timeout.
-
-    Starlette's TestClient receive_json() blocks forever,
-    so we wrap it in a thread with timeout.
-    """
-    result = [None]
-    error = [None]
-
-    def receive():
-        try:
-            result[0] = ws.receive_json()
-        except Exception as e:
-            error[0] = e
-
-    thread = threading.Thread(target=receive)
-    thread.daemon = True
-    thread.start()
-    thread.join(timeout=timeout)
-
-    if thread.is_alive():
-        return None  # Timed out
-    if error[0]:
-        raise error[0]
-    return result[0]
-
-
 def collect_output_until(
-    ws, marker: str, max_messages: int = 50, timeout: float = 5.0
+    ws, marker: str, max_messages: int = 30, timeout: float = 5.0
 ) -> list[str]:
     """
-    Collect output messages until marker is found or timeout/max reached.
+    Collect output messages until marker is found or limits reached.
 
+    Uses bounded iteration to prevent infinite loops.
     Returns list of output data strings.
     """
     outputs = []
     start = time.time()
 
     for _ in range(max_messages):
-        if time.time() - start > timeout:
+        elapsed = time.time() - start
+        if elapsed > timeout:
             break
 
-        msg = receive_with_timeout(ws, timeout=1.0)
+        try:
+            msg = ws.receive_json()
+        except Exception:
+            # Connection closed or error
+            break
+
         if msg is None:
             continue
 
@@ -71,6 +54,7 @@ def collect_output_until(
 class TestWebSocketConnection:
     """Test WebSocket connection handling."""
 
+    @pytest.mark.timeout(10)
     def test_websocket_accepts_connection(self):
         """
         Given: WebSocket connection request to /ws/terminal/{id}
@@ -85,6 +69,7 @@ class TestWebSocketConnection:
         assert message["type"] == "connected"
         assert message["terminal_id"] == "term_123"
 
+    @pytest.mark.timeout(10)
     def test_websocket_creates_unique_terminal_per_connection(self):
         """
         Given: Two WebSocket connections with different IDs
@@ -108,6 +93,7 @@ class TestWebSocketConnection:
 class TestWebSocketInput:
     """Test WebSocket input handling (sending commands to PTY)."""
 
+    @pytest.mark.timeout(15)
     def test_websocket_forwards_input_to_pty(self):
         """
         Given: Input message sent to WebSocket
@@ -127,6 +113,7 @@ class TestWebSocketInput:
 
         assert "hello_from_test" in "".join(outputs), f"Output was: {''.join(outputs)}"
 
+    @pytest.mark.timeout(15)
     def test_websocket_handles_multiple_commands(self):
         """
         Given: Multiple input messages
@@ -140,18 +127,23 @@ class TestWebSocketInput:
 
             # Send commands with small delay between
             ws.send_json({"type": "input", "data": "echo first_cmd\n"})
-            time.sleep(0.2)
+            time.sleep(0.1)
             ws.send_json({"type": "input", "data": "echo second_cmd\n"})
 
-            # Collect outputs - wait for both markers
+            # Collect outputs - bounded iteration for both markers
             outputs = []
             start = time.time()
-            while time.time() - start < 5.0:
-                msg = receive_with_timeout(ws, timeout=0.5)
-                if msg and msg.get("type") == "output":
-                    outputs.append(msg.get("data", ""))
-                combined = "".join(outputs)
-                if "first_cmd" in combined and "second_cmd" in combined:
+            for _ in range(30):
+                if time.time() - start > 5.0:
+                    break
+                try:
+                    msg = ws.receive_json()
+                    if msg and msg.get("type") == "output":
+                        outputs.append(msg.get("data", ""))
+                    combined = "".join(outputs)
+                    if "first_cmd" in combined and "second_cmd" in combined:
+                        break
+                except Exception:
                     break
 
         combined = "".join(outputs)
@@ -162,6 +154,7 @@ class TestWebSocketInput:
 class TestWebSocketResize:
     """Test WebSocket resize handling."""
 
+    @pytest.mark.timeout(15)
     def test_websocket_handles_resize(self):
         """
         Given: Resize message with cols and rows
@@ -187,6 +180,7 @@ class TestWebSocketResize:
 class TestWebSocketCleanup:
     """Test WebSocket cleanup on disconnect."""
 
+    @pytest.mark.timeout(10)
     def test_websocket_destroys_terminal_on_disconnect(self):
         """
         Given: WebSocket connection that disconnects
@@ -207,6 +201,7 @@ class TestWebSocketCleanup:
 class TestWebSocketErrors:
     """Test WebSocket error handling."""
 
+    @pytest.mark.timeout(15)
     def test_websocket_handles_invalid_message_type(self):
         """
         Given: Message with unknown type
@@ -228,6 +223,7 @@ class TestWebSocketErrors:
 
         assert "still_works" in "".join(outputs), f"Output was: {''.join(outputs)}"
 
+    @pytest.mark.timeout(15)
     def test_websocket_handles_malformed_json(self):
         """
         Given: Malformed JSON message
@@ -242,12 +238,11 @@ class TestWebSocketErrors:
             # Send malformed data (as text, not JSON)
             ws.send_text("not valid json {{{")
 
-            # Should receive error message
-            error_msg = receive_with_timeout(ws, timeout=2.0)
-
-            # Either we got an error or the connection is still working
-            if error_msg and error_msg.get("type") == "error":
-                # Good - we got an error message
+            # Try to receive error message (may or may not come)
+            error_msg = None
+            try:
+                error_msg = ws.receive_json()
+            except Exception:
                 pass
 
             # Connection should still work

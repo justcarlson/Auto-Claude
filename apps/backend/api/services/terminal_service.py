@@ -10,6 +10,7 @@ import asyncio
 import json
 import os
 import re
+import select
 import uuid
 from collections.abc import AsyncGenerator
 from dataclasses import dataclass
@@ -210,6 +211,8 @@ class TerminalManager:
         Yields chunks of output as they become available.
         Stops when timeout reached with no data.
 
+        Uses select() to avoid blocking reads that leave orphaned executor threads.
+
         Args:
             terminal_id: Terminal ID to read from
             timeout: Max time to wait for data (seconds)
@@ -226,20 +229,31 @@ class TerminalManager:
 
         loop = asyncio.get_event_loop()
         deadline = loop.time() + timeout
+        fd = terminal.process.fd
 
         while loop.time() < deadline and terminal.process.isalive():
             try:
-                # Non-blocking read
-                data = await asyncio.wait_for(
-                    loop.run_in_executor(None, lambda: terminal.process.read(4096)),
-                    timeout=min(0.1, deadline - loop.time()),
+                # Use select to check if data is available (non-blocking)
+                remaining = max(0.01, min(0.1, deadline - loop.time()))
+                readable, _, _ = await loop.run_in_executor(
+                    None, lambda t=remaining: select.select([fd], [], [], t)
                 )
+
+                if not readable:
+                    # No data available within timeout
+                    continue
+
+                # Data is available, read it (won't block since select said readable)
+                data = await loop.run_in_executor(None, lambda: os.read(fd, 4096))
                 if data:
                     yield data.decode("utf-8", errors="replace")
                     deadline = loop.time() + timeout  # Reset deadline on data
-            except asyncio.TimeoutError:
-                continue
-            except EOFError:
+                else:
+                    # Empty read means EOF
+                    break
+            except asyncio.CancelledError:
+                break
+            except (OSError, ValueError, EOFError):
                 break
 
     async def resize(self, terminal_id: str, rows: int, cols: int) -> None:
