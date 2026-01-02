@@ -18,13 +18,15 @@ import {
   ChevronDown,
   ChevronRight,
   Users,
-  Lock
+  Lock,
+  Globe
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Card, CardContent } from '../ui/card';
 import { cn } from '../../lib/utils';
+import { isWebMode } from '../../lib/api';
 import { loadClaudeProfiles as loadGlobalClaudeProfiles } from '../../stores/claude-profile-store';
 import type { ClaudeProfile } from '../../../shared/types';
 
@@ -303,15 +305,60 @@ export function OAuthStep({ onNext, onBack, onSkip }: OAuthStepProps) {
           </p>
         </div>
 
+        {/* Web mode notice - auth not available */}
+        {isWebMode() && (
+          <div className="space-y-6">
+            <Card className="border border-info/30 bg-info/10">
+              <CardContent className="p-5">
+                <div className="flex items-start gap-4">
+                  <Globe className="h-5 w-5 text-info shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-foreground mb-1">
+                      Web Mode Detected
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Claude authentication is configured via environment variables in web/Docker mode.
+                      Set <code className="px-1 py-0.5 bg-muted rounded font-mono text-xs">CLAUDE_CODE_OAUTH_TOKEN</code> in your Docker environment.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Action Buttons for web mode */}
+            <div className="flex justify-between items-center pt-6 border-t border-border">
+              <Button
+                variant="ghost"
+                onClick={onBack}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                Back
+              </Button>
+              <div className="flex gap-4">
+                <Button
+                  variant="ghost"
+                  onClick={onSkip}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  Skip
+                </Button>
+                <Button onClick={onNext}>
+                  Continue
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Loading state */}
-        {isLoadingProfiles && (
+        {!isWebMode() && isLoadingProfiles && (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
         )}
 
-        {/* Profile management UI - placeholder for subtask-1-4 */}
-        {!isLoadingProfiles && (
+        {/* Profile management UI - Electron mode only */}
+        {!isWebMode() && !isLoadingProfiles && (
           <div className="space-y-6">
             {/* Error banner */}
             {error && (
@@ -639,31 +686,32 @@ export function OAuthStep({ onNext, onBack, onSkip }: OAuthStepProps) {
           </div>
         )}
 
-        {/* Action Buttons */}
-        <div className="flex justify-between items-center mt-10 pt-6 border-t border-border">
-          <Button
-            variant="ghost"
-            onClick={onBack}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            Back
-          </Button>
-          <div className="flex gap-4">
+        {!isWebMode() && (
+          <div className="flex justify-between items-center mt-10 pt-6 border-t border-border">
             <Button
               variant="ghost"
-              onClick={onSkip}
+              onClick={onBack}
               className="text-muted-foreground hover:text-foreground"
             >
-              Skip
+              Back
             </Button>
-            <Button
-              onClick={handleContinue}
-              disabled={!hasAuthenticatedProfile}
-            >
-              Continue
-            </Button>
+            <div className="flex gap-4">
+              <Button
+                variant="ghost"
+                onClick={onSkip}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                Skip
+              </Button>
+              <Button
+                onClick={handleContinue}
+                disabled={!hasAuthenticatedProfile}
+              >
+                Continue
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

@@ -6,10 +6,15 @@ import {
   Loader2,
   AlertCircle,
   RefreshCw,
-  ExternalLink
+  ExternalLink,
+  Globe,
+  Server
 } from 'lucide-react';
 import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 import { cn } from '../../lib/utils';
+import { isWebMode } from '../../lib/api';
 import { useDownloadStore } from '../../stores/download-store';
 
 type OllamaState = 'checking' | 'not-installed' | 'not-running' | 'available';
@@ -291,6 +296,102 @@ export function OllamaModelSelector({
      if (!model.installed || disabled) return;
      onModelSelect(model.name, model.dim);
    };
+
+  const [webModelName, setWebModelName] = useState('nomic-embed-text');
+  const [webModelDim, setWebModelDim] = useState(768);
+
+  if (isWebMode()) {
+    const handleWebModelSelect = () => {
+      onModelSelect(webModelName, webModelDim);
+    };
+
+    return (
+      <div className={cn('space-y-4', className)}>
+        <div className="rounded-lg border border-info/30 bg-info/10 p-4">
+          <div className="flex items-start gap-3">
+            <Globe className="h-5 w-5 text-info shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-foreground">
+                Web Mode - External Ollama Required
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">
+                In Docker/web mode, Ollama must run externally. Configure your Ollama instance:
+              </p>
+              <ul className="text-xs text-muted-foreground mt-2 space-y-1 list-disc list-inside">
+                <li>Run Ollama on host: <code className="px-1 py-0.5 bg-muted rounded">ollama serve</code></li>
+                <li>Or use a sidecar container with Ollama image</li>
+                <li>Set <code className="px-1 py-0.5 bg-muted rounded">OLLAMA_BASE_URL</code> env var</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-3 p-4 rounded-lg border border-border bg-muted/30">
+          <div className="flex items-center gap-2">
+            <Server className="h-4 w-4 text-muted-foreground" />
+            <Label className="text-sm font-medium">Embedding Model Configuration</Label>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="web-model-name" className="text-xs text-muted-foreground">
+                Model Name
+              </Label>
+              <Input
+                id="web-model-name"
+                value={webModelName}
+                onChange={(e) => setWebModelName(e.target.value)}
+                placeholder="nomic-embed-text"
+                className="text-sm"
+                disabled={disabled}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="web-model-dim" className="text-xs text-muted-foreground">
+                Dimensions
+              </Label>
+              <Input
+                id="web-model-dim"
+                type="number"
+                value={webModelDim}
+                onChange={(e) => setWebModelDim(parseInt(e.target.value) || 768)}
+                placeholder="768"
+                className="text-sm"
+                disabled={disabled}
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-2">
+            <p className="text-xs text-muted-foreground">
+              Common models: nomic-embed-text (768), embeddinggemma (768), mxbai-embed-large (1024)
+            </p>
+            <Button
+              size="sm"
+              onClick={handleWebModelSelect}
+              disabled={disabled || !webModelName.trim()}
+            >
+              <Check className="h-3.5 w-3.5 mr-1.5" />
+              Apply
+            </Button>
+          </div>
+        </div>
+
+        {selectedModel && (
+          <div className="flex items-center gap-2 p-2 rounded-md bg-success/10 border border-success/30">
+            <Check className="h-4 w-4 text-success" />
+            <span className="text-sm text-success">
+              Selected: {selectedModel}
+            </span>
+          </div>
+        )}
+
+        <p className="text-xs text-muted-foreground">
+          Ensure your Ollama instance has the model installed: <code className="px-1 py-0.5 bg-muted rounded">ollama pull {webModelName}</code>
+        </p>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

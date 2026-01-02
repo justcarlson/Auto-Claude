@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { Task, TaskStatus, ImplementationPlan, Subtask, TaskMetadata, ExecutionProgress, ExecutionPhase, ReviewReason, TaskDraft } from '../../shared/types';
+import { getAPIClient, isWebMode } from '../lib/api';
 
 interface TaskState {
   tasks: Task[];
@@ -174,16 +175,14 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   }
 }));
 
-/**
- * Load tasks for a project
- */
 export async function loadTasks(projectId: string): Promise<void> {
   const store = useTaskStore.getState();
+  const api = getAPIClient();
   store.setLoading(true);
   store.setError(null);
 
   try {
-    const result = await window.electronAPI.getTasks(projectId);
+    const result = await api.getTasks(projectId) as { success: boolean; data?: Task[]; error?: string };
     if (result.success && result.data) {
       store.setTasks(result.data);
     } else {
@@ -196,9 +195,6 @@ export async function loadTasks(projectId: string): Promise<void> {
   }
 }
 
-/**
- * Create a new task
- */
 export async function createTask(
   projectId: string,
   title: string,
@@ -206,15 +202,27 @@ export async function createTask(
   metadata?: TaskMetadata
 ): Promise<Task | null> {
   const store = useTaskStore.getState();
+  const api = getAPIClient();
 
   try {
-    const result = await window.electronAPI.createTask(projectId, title, description, metadata);
-    if (result.success && result.data) {
-      store.addTask(result.data);
-      return result.data;
+    if (isWebMode()) {
+      const result = await api.createTask(projectId, { title, description }) as { success: boolean; data?: Task; error?: string };
+      if (result.success && result.data) {
+        store.addTask(result.data);
+        return result.data;
+      } else {
+        store.setError(result.error || 'Failed to create task');
+        return null;
+      }
     } else {
-      store.setError(result.error || 'Failed to create task');
-      return null;
+      const result = await window.electronAPI.createTask(projectId, title, description, metadata);
+      if (result.success && result.data) {
+        store.addTask(result.data);
+        return result.data;
+      } else {
+        store.setError(result.error || 'Failed to create task');
+        return null;
+      }
     }
   } catch (error) {
     store.setError(error instanceof Error ? error.message : 'Unknown error');
@@ -222,28 +230,30 @@ export async function createTask(
   }
 }
 
-/**
- * Start a task
- */
 export function startTask(taskId: string, options?: { parallel?: boolean; workers?: number }): void {
-  window.electronAPI.startTask(taskId, options);
+  const api = getAPIClient();
+  if (isWebMode()) {
+    api.startTask(taskId);
+  } else {
+    window.electronAPI.startTask(taskId, options);
+  }
 }
 
-/**
- * Stop a task
- */
 export function stopTask(taskId: string): void {
-  window.electronAPI.stopTask(taskId);
+  const api = getAPIClient();
+  api.stopTask(taskId);
 }
 
-/**
- * Submit review for a task
- */
 export async function submitReview(
   taskId: string,
   approved: boolean,
   feedback?: string
 ): Promise<boolean> {
+  if (isWebMode()) {
+    console.warn('[TaskStore] submitReview not available in web mode');
+    return false;
+  }
+
   const store = useTaskStore.getState();
 
   try {
@@ -258,20 +268,20 @@ export async function submitReview(
   }
 }
 
-/**
- * Update task status and persist to file
- */
 export async function persistTaskStatus(
   taskId: string,
   status: TaskStatus
 ): Promise<boolean> {
+  if (isWebMode()) {
+    console.warn('[TaskStore] persistTaskStatus not fully supported in web mode');
+    return false;
+  }
+
   const store = useTaskStore.getState();
 
   try {
-    // Update local state first for immediate feedback
     store.updateTaskStatus(taskId, status);
 
-    // Persist to file
     const result = await window.electronAPI.updateTaskStatus(taskId, status);
     if (!result.success) {
       console.error('Failed to persist task status:', result.error);
@@ -284,21 +294,21 @@ export async function persistTaskStatus(
   }
 }
 
-/**
- * Update task title/description/metadata and persist to file
- */
 export async function persistUpdateTask(
   taskId: string,
   updates: { title?: string; description?: string; metadata?: Partial<TaskMetadata> }
 ): Promise<boolean> {
+  if (isWebMode()) {
+    console.warn('[TaskStore] persistUpdateTask not fully supported in web mode');
+    return false;
+  }
+
   const store = useTaskStore.getState();
 
   try {
-    // Call the IPC to persist changes to spec files
     const result = await window.electronAPI.updateTask(taskId, updates);
 
     if (result.success && result.data) {
-      // Update local state with the returned task data
       store.updateTask(taskId, {
         title: result.data.title,
         description: result.data.description,
@@ -316,10 +326,11 @@ export async function persistUpdateTask(
   }
 }
 
-/**
- * Check if a task has an active running process
- */
 export async function checkTaskRunning(taskId: string): Promise<boolean> {
+  if (isWebMode()) {
+    return false;
+  }
+
   try {
     const result = await window.electronAPI.checkTaskRunning(taskId);
     return result.success && result.data === true;
@@ -329,15 +340,14 @@ export async function checkTaskRunning(taskId: string): Promise<boolean> {
   }
 }
 
-/**
- * Recover a stuck task (status shows in_progress but no process running)
- * @param taskId - The task ID to recover
- * @param options - Recovery options (autoRestart defaults to true)
- */
 export async function recoverStuckTask(
   taskId: string,
   options: { targetStatus?: TaskStatus; autoRestart?: boolean } = { autoRestart: true }
 ): Promise<{ success: boolean; message: string; autoRestarted?: boolean }> {
+  if (isWebMode()) {
+    return { success: false, message: 'Not available in web mode' };
+  }
+
   const store = useTaskStore.getState();
 
   try {
@@ -366,21 +376,17 @@ export async function recoverStuckTask(
   }
 }
 
-/**
- * Delete a task and its spec directory
- */
 export async function deleteTask(
   taskId: string
 ): Promise<{ success: boolean; error?: string }> {
   const store = useTaskStore.getState();
+  const api = getAPIClient();
 
   try {
-    const result = await window.electronAPI.deleteTask(taskId);
+    const result = await api.deleteTask(taskId);
 
     if (result.success) {
-      // Remove from local state
       store.setTasks(store.tasks.filter(t => t.id !== taskId && t.specId !== taskId));
-      // Clear selection if this task was selected
       if (store.selectedTaskId === taskId) {
         store.selectTask(null);
       }
@@ -400,15 +406,15 @@ export async function deleteTask(
   }
 }
 
-/**
- * Archive tasks
- * Marks tasks as archived by adding archivedAt timestamp to metadata
- */
 export async function archiveTasks(
   projectId: string,
   taskIds: string[],
   version?: string
 ): Promise<{ success: boolean; error?: string }> {
+  if (isWebMode()) {
+    return { success: false, error: 'Not available in web mode' };
+  }
+
   try {
     const result = await window.electronAPI.archiveTasks(projectId, taskIds, version);
 

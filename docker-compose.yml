@@ -1,0 +1,35 @@
+name: auto-claude
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auto-claude
+    ports:
+      - "3000:3000"
+    volumes:
+      # Projects directory - mount your repos here
+      - ${PROJECTS_PATH:-./projects}:/projects
+      # Data persistence for app state
+      - auto-claude-data:/data
+      # Claude CLI config persistence
+      - auto-claude-claude:/home/claude/.claude
+    environment:
+      # Required: Claude OAuth token
+      - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN:-}
+      # Optional: Memory layer
+      - GRAPHITI_ENABLED=${GRAPHITI_ENABLED:-true}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      # Optional: Integrations
+      - LINEAR_API_KEY=${LINEAR_API_KEY:-}
+    restart: unless-stopped
+    labels:
+      # Traefik labels for Dokploy routing
+      - "traefik.enable=true"
+      - "traefik.http.routers.auto-claude.rule=Host(`${DOMAIN:-localhost}`)"
+      - "traefik.http.services.auto-claude.loadbalancer.server.port=3000"
+
+volumes:
+  auto-claude-data:
+  auto-claude-claude:

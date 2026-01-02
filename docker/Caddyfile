@@ -1,0 +1,28 @@
+# Auto-Claude Caddyfile
+# ======================
+# Serves React SPA and proxies API/WebSocket to FastAPI
+
+:3000 {
+    # API routes -> FastAPI (MUST come before file_server)
+    handle /api/* {
+        reverse_proxy localhost:8000
+    }
+
+    # WebSocket routes -> FastAPI
+    handle /ws/* {
+        reverse_proxy localhost:8000
+    }
+
+    # Static files and SPA fallback (catch-all)
+    handle {
+        root * /var/www/html
+        try_files {path} /index.html
+        file_server
+    }
+
+    # Logging
+    log {
+        output stdout
+        format console
+    }
+}

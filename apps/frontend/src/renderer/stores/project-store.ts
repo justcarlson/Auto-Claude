@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { Project, ProjectSettings, AutoBuildVersionInfo, InitializationResult } from '../../shared/types';
+import { getAPIClient, isWebMode } from '../lib/api';
 
 // localStorage keys for persisting project state (legacy - now using IPC)
 const LAST_SELECTED_PROJECT_KEY = 'lastSelectedProjectId';
@@ -205,16 +206,15 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   }
 }));
 
-/**
- * Save tab state to main process (debounced to avoid excessive IPC calls)
- */
 function saveTabStateToMain(): void {
-  // Clear any pending save
+  if (isWebMode()) {
+    return;
+  }
+
   if (saveTabStateTimeout) {
     clearTimeout(saveTabStateTimeout);
   }
 
-  // Debounce saves to avoid excessive IPC calls
   saveTabStateTimeout = setTimeout(async () => {
     const store = useProjectStore.getState();
     const tabState = {
@@ -231,29 +231,27 @@ function saveTabStateToMain(): void {
   }, 100);
 }
 
-/**
- * Load projects from main process
- */
 export async function loadProjects(): Promise<void> {
   const store = useProjectStore.getState();
+  const api = getAPIClient();
   store.setLoading(true);
   store.setError(null);
 
   try {
-    // First, load tab state from main process (reliable persistence)
-    const tabStateResult = await window.electronAPI.getTabState();
-    console.log('[ProjectStore] Loaded tab state from main process:', tabStateResult.data);
+    if (!isWebMode()) {
+      const tabStateResult = await window.electronAPI.getTabState();
+      console.log('[ProjectStore] Loaded tab state from main process:', tabStateResult.data);
 
-    if (tabStateResult.success && tabStateResult.data) {
-      useProjectStore.setState({
-        openProjectIds: tabStateResult.data.openProjectIds || [],
-        activeProjectId: tabStateResult.data.activeProjectId || null,
-        tabOrder: tabStateResult.data.tabOrder || []
-      });
+      if (tabStateResult.success && tabStateResult.data) {
+        useProjectStore.setState({
+          openProjectIds: tabStateResult.data.openProjectIds || [],
+          activeProjectId: tabStateResult.data.activeProjectId || null,
+          tabOrder: tabStateResult.data.tabOrder || []
+        });
+      }
     }
 
-    // Then load projects
-    const result = await window.electronAPI.getProjects();
+    const result = await api.getProjects() as { success: boolean; data?: Project[]; error?: string };
     console.log('[ProjectStore] getProjects result:', {
       success: result.success,
       projectCount: result.data?.length,
@@ -328,14 +326,12 @@ export async function loadProjects(): Promise<void> {
   }
 }
 
-/**
- * Add a new project
- */
 export async function addProject(projectPath: string): Promise<Project | null> {
   const store = useProjectStore.getState();
+  const api = getAPIClient();
 
   try {
-    const result = await window.electronAPI.addProject(projectPath);
+    const result = await api.addProject(projectPath) as { success: boolean; data?: Project; error?: string };
     if (result.success && result.data) {
       store.addProject(result.data);
       store.selectProject(result.data.id);
@@ -352,14 +348,12 @@ export async function addProject(projectPath: string): Promise<Project | null> {
   }
 }
 
-/**
- * Remove a project
- */
 export async function removeProject(projectId: string): Promise<boolean> {
   const store = useProjectStore.getState();
+  const api = getAPIClient();
 
   try {
-    const result = await window.electronAPI.removeProject(projectId);
+    const result = await api.removeProject(projectId);
     if (result.success) {
       store.removeProject(projectId);
       // Also close the tab if it's open
@@ -374,13 +368,15 @@ export async function removeProject(projectId: string): Promise<boolean> {
   }
 }
 
-/**
- * Update project settings
- */
 export async function updateProjectSettings(
   projectId: string,
   settings: Partial<ProjectSettings>
 ): Promise<boolean> {
+  if (isWebMode()) {
+    console.warn('[ProjectStore] updateProjectSettings not available in web mode');
+    return false;
+  }
+
   const store = useProjectStore.getState();
 
   try {
@@ -403,12 +399,13 @@ export async function updateProjectSettings(
   }
 }
 
-/**
- * Check auto-claude version status for a project
- */
 export async function checkProjectVersion(
   projectId: string
 ): Promise<AutoBuildVersionInfo | null> {
+  if (isWebMode()) {
+    return null;
+  }
+
   try {
     const result = await window.electronAPI.checkProjectVersion(projectId);
     if (result.success && result.data) {
@@ -420,12 +417,14 @@ export async function checkProjectVersion(
   }
 }
 
-/**
- * Initialize auto-claude in a project
- */
 export async function initializeProject(
   projectId: string
 ): Promise<InitializationResult | null> {
+  if (isWebMode()) {
+    console.warn('[ProjectStore] initializeProject not available in web mode');
+    return null;
+  }
+
   const store = useProjectStore.getState();
 
   try {
