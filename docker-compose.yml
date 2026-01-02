@@ -1,3 +1,4 @@
+version: "3.8"
 name: auto-claude
 
 services:
@@ -5,9 +6,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: auto-claude
     ports:
-      - "3000:3000"
+      - 3000
     volumes:
       # Projects directory - mount your repos here
       - ${PROJECTS_PATH:-./projects}:/projects
