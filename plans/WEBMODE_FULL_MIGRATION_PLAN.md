@@ -30,6 +30,137 @@ The frontend uses a **Strategy Pattern** for API abstraction:
 
 ---
 
+## Automation Analysis
+
+### What Can Be Automated
+
+Based on AST analysis, the migration breaks into two categories:
+
+| Category | Usages | Methods | Automation |
+|----------|--------|---------|------------|
+| **Ready for AST transform** | 51 | 19 | ✅ `ast-grep` can migrate now |
+| **Needs backend first** | 357 | 204 | ❌ Manual after backend APIs exist |
+
+### Automatable Methods (51 usages across 19 methods)
+
+These methods already exist in `APIClient` and can be auto-migrated using `ast-grep`:
+
+```
+updateProjectEnv (9), saveSettings (9), getProjectEnv (6), 
+getGitBranches (4), updateTask (3), discardWorktree (3),
+mergeWorktree (2), listDirectory (2), getTaskLogs (2), 
+getSettings (2), listWorktrees (1), readFile (1), 
+getWorktreeStatus (1), getWorktreeDiff (1), mergeWorktreePreview (1),
+onTaskProgress (1), onTaskError (1), onTaskStatusChange (1), createTask (1)
+```
+
+**Transform pattern:**
+```typescript
+// Before
+window.electronAPI.getSettings()
+
+// After  
+getAPIClient().getSettings()
+```
+
+**ast-grep commands:**
+```bash
+# Example: Migrate getSettings
+ast-grep --pattern 'window.electronAPI.getSettings()' \
+  --rewrite 'getAPIClient().getSettings()' \
+  --lang typescript \
+  apps/frontend/src/renderer/
+
+# Example: Migrate saveSettings  
+ast-grep --pattern 'window.electronAPI.saveSettings($ARGS)' \
+  --rewrite 'getAPIClient().saveSettings($ARGS)' \
+  --lang typescript \
+  apps/frontend/src/renderer/
+```
+
+**Post-transform requirements:**
+1. Add import: `import { getAPIClient } from '../lib/api'`
+2. Run `npm run typecheck` to verify
+3. Test in both Electron and Web modes
+
+### Not Automatable (357 usages across 204 methods)
+
+These require backend API implementation first:
+
+| Category | Methods | Example | Blocker |
+|----------|---------|---------|---------|
+| **GitHub Integration** | 52 | `github.runPRReview` | Needs proxy routes |
+| **GitLab Integration** | 64 | `runGitLabMRReview` | Needs proxy routes |
+| **Claude Profiles** | 12 | `getClaudeProfiles` | Needs profile API |
+| **Ideation** | 17 | `generateIdeation` | Needs backend + WebSocket |
+| **Insights** | 13 | `sendInsightsMessage` | Needs backend + SSE |
+| **Roadmap** | 7 | `generateRoadmap` | Needs backend |
+| **Changelog** | 10 | `generateChangelog` | Needs backend |
+| **Terminal Events** | 8 | `onTerminalOutput` | Already has WebSocket ✅ |
+| **App Updates** | 6 | `checkAppUpdate` | Electron-only (guard) |
+| **File Dialogs** | 5 | `selectDirectory` | Electron-only (guard) |
+
+### Automation Script (Future)
+
+When ready to batch-migrate, use this script pattern:
+
+```bash
+#!/bin/bash
+# migrate-to-api-client.sh
+
+METHODS=(
+  "getSettings"
+  "saveSettings:$ARGS"
+  "getProjectEnv:$ARGS"
+  "updateProjectEnv:$$$ARGS"
+  "getGitBranches:$ARGS"
+  "updateTask:$$$ARGS"
+  "listWorktrees:$ARGS"
+  "getWorktreeStatus:$ARGS"
+  "getWorktreeDiff:$ARGS"
+  "mergeWorktreePreview:$ARGS"
+  "mergeWorktree:$$$ARGS"
+  "discardWorktree:$ARGS"
+  "listDirectory:$$$ARGS"
+  "readFile:$$$ARGS"
+  "getTaskLogs:$ARGS"
+  "createTask:$$$ARGS"
+)
+
+for method_spec in "${METHODS[@]}"; do
+  method="${method_spec%%:*}"
+  args="${method_spec#*:}"
+  
+  if [[ "$args" == "$method" ]]; then
+    # No args
+    pattern="window.electronAPI.${method}()"
+    rewrite="getAPIClient().${method}()"
+  else
+    pattern="window.electronAPI.${method}(${args})"
+    rewrite="getAPIClient().${method}(${args})"
+  fi
+  
+  echo "Migrating: $method"
+  sg --pattern "$pattern" --rewrite "$rewrite" \
+     --lang typescript apps/frontend/src/renderer/
+done
+
+# Fix imports (requires separate tool/script)
+echo "Remember to add imports to affected files!"
+```
+
+### Recommended Automation Timing
+
+| Sprint | Automation Opportunity |
+|--------|----------------------|
+| **Sprint A** | Run AST transforms for 51 ready usages |
+| **Sprint C** | After AI backends ready, add those methods to APIClient, then transform |
+| **Sprint D** | After GitHub proxy ready, add methods, then transform |
+| **Sprint E** | After GitLab proxy ready, add methods, then transform |
+| **Sprint F** | Final sweep with comprehensive transform script |
+
+---
+
 ## Phase 1: Foundation (COMPLETE ✅)
 
 Already implemented in Sprint 1-3.2:
