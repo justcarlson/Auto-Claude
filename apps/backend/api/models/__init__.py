@@ -1,4 +1,24 @@
 # API Models
-from .api_models import Project, ProjectCreate, Task, TaskCreate, TaskUpdate
+from .api_models import (
+    AppSettings,
+    AppSettingsUpdate,
+    Project,
+    ProjectCreate,
+    Task,
+    TaskCreate,
+    TaskUpdate,
+    ThemeType,
+    VersionResponse,
+)
 
-__all__ = ["Project", "ProjectCreate", "Task", "TaskCreate", "TaskUpdate"]
+__all__ = [
+    "AppSettings",
+    "AppSettingsUpdate",
+    "Project",
+    "ProjectCreate",
+    "Task",
+    "TaskCreate",
+    "TaskUpdate",
+    "ThemeType",
+    "VersionResponse",
+]

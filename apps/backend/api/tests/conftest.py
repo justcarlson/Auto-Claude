@@ -112,12 +112,14 @@ def temp_projects_dir(temp_dir: Path) -> Path:
 @pytest.fixture(autouse=True)
 def reset_services():
     """Reset all service singletons before each test."""
-    from api.services import ProjectService, TaskService
+    from api.services import ProjectService, SettingsService, TaskService
 
     ProjectService.reset()
+    SettingsService.reset()
     TaskService.reset()
     yield
     ProjectService.reset()
+    SettingsService.reset()
     TaskService.reset()
 
 
