@@ -929,14 +929,23 @@ cd apps/frontend && npm run build:web
 
 #### 2.4 Task Logs
 ```
-[ ] TEST: apps/backend/api/tests/routes/test_task_logs.py
-    [ ] test_get_logs_returns_structured_data
-    [ ] test_watch_logs_streams_updates
-    [ ] test_logs_for_nonexistent_task
+[x] TEST: apps/backend/api/tests/routes/test_task_logs.py
+    [x] test_get_logs_returns_structured_data
+    [x] test_get_logs_for_nonexistent_task
+    [x] test_get_logs_for_task_without_logs
+    [x] test_get_logs_path_traversal_blocked
+    [x] test_get_logs_returns_proper_entry_types
+    [x] test_service_not_configured_error
+    [x] test_get_logs_with_corrupted_json
 
-[ ] BACKEND: apps/backend/api/routes/task_logs.py
-    [ ] GET /api/tasks/{id}/logs
-    [ ] WS /ws/tasks/{id}/logs
+[x] BACKEND: apps/backend/api/routes/task_logs.py
+    [x] GET /api/tasks/{id}/logs
+    [ ] WS /ws/tasks/{id}/logs (deferred - not needed for MVP)
+
+[x] FRONTEND: apps/frontend/src/renderer/lib/api/
+    [x] types.ts - TaskLogs export from shared types
+    [x] web-client.ts - getTaskLogs()
+    [x] electron-client.ts - stub method
 
 [ ] MIGRATE:
     [ ] components/task-detail/hooks/useTaskDetail.ts (lines 138, 159, 162, 181)
