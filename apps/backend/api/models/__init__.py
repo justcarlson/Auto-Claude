@@ -2,8 +2,11 @@
 from .api_models import (
     AppSettings,
     AppSettingsUpdate,
+    McpServersConfig,
     Project,
     ProjectCreate,
+    ProjectEnvConfig,
+    ProjectEnvConfigUpdate,
     Task,
     TaskCreate,
     TaskUpdate,
@@ -14,8 +17,11 @@ from .api_models import (
 __all__ = [
     "AppSettings",
     "AppSettingsUpdate",
+    "McpServersConfig",
     "Project",
     "ProjectCreate",
+    "ProjectEnvConfig",
+    "ProjectEnvConfigUpdate",
     "Task",
     "TaskCreate",
     "TaskUpdate",

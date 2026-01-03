@@ -6,6 +6,10 @@
  * These types define the contract that both ElectronAPIClient and WebAPIClient must implement.
  */
 
+import type { ProjectEnvConfig as SharedProjectEnvConfig } from '../../../shared/types/project';
+
+export type ProjectEnvConfig = SharedProjectEnvConfig;
+
 // =============================================================================
 // RESULT TYPES
 // =============================================================================
@@ -138,6 +142,10 @@ export interface APIClient {
   // Settings
   getSettings(): Promise<APIResult<AppSettings>>;
   saveSettings(settings: Partial<AppSettings>): Promise<APIResult<void>>;
+  
+  // Project environment
+  getProjectEnv(projectId: string): Promise<APIResult<ProjectEnvConfig>>;
+  updateProjectEnv(projectId: string, config: Partial<ProjectEnvConfig>): Promise<APIResult<ProjectEnvConfig>>;
   
   // Event subscriptions (return cleanup functions)
   onTaskProgress(callback: (taskId: string, progress: unknown) => void): () => void;

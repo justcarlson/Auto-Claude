@@ -48,6 +48,7 @@ import {
 } from './ui/dialog';
 import { useSettingsStore } from '../stores/settings-store';
 import { useProjectStore } from '../stores/project-store';
+import { getAPIClient, isWebMode } from '../lib/api';
 import type { ProjectEnvConfig, AgentMcpOverrides, AgentMcpOverride, CustomMcpServer, McpHealthCheckResult, McpHealthStatus } from '../../shared/types';
 import { CustomMcpDialog } from './CustomMcpDialog';
 import { useTranslation } from 'react-i18next';
@@ -664,11 +665,13 @@ export function AgentTools() {
   const [serverHealthStatus, setServerHealthStatus] = useState<Record<string, McpHealthCheckResult>>({});
   const [testingServers, setTestingServers] = useState<Set<string>>(new Set());
 
-  // Load project env config when project changes
   useEffect(() => {
     if (selectedProjectId && selectedProject?.autoBuildPath) {
       setIsLoading(true);
-      window.electronAPI.getProjectEnv(selectedProjectId)
+      const fetchEnv = isWebMode()
+        ? getAPIClient().getProjectEnv(selectedProjectId)
+        : window.electronAPI.getProjectEnv(selectedProjectId);
+      fetchEnv
         .then((result) => {
           if (result.success && result.data) {
             setEnvConfig(result.data);
@@ -702,13 +705,12 @@ export function AgentTools() {
     // Optimistic update
     setEnvConfig((prev) => prev ? { ...prev, mcpServers: newMcpServers } : null);
 
-    // Save to backend
     try {
-      await window.electronAPI.updateProjectEnv(selectedProjectId, {
-        mcpServers: newMcpServers,
-      });
+      const updateFn = isWebMode()
+        ? getAPIClient().updateProjectEnv(selectedProjectId, { mcpServers: newMcpServers })
+        : window.electronAPI.updateProjectEnv(selectedProjectId, { mcpServers: newMcpServers });
+      await updateFn;
     } catch (error) {
-      // Revert on error
       console.error('Failed to update MCP config:', error);
       setEnvConfig((prev) => prev ? { ...prev, mcpServers: envConfig.mcpServers } : null);
     }
@@ -750,18 +752,17 @@ export function AgentTools() {
     // Optimistic update
     setEnvConfig((prev) => prev ? { ...prev, agentMcpOverrides: newOverrides } : null);
 
-    // Save to backend
     try {
-      await window.electronAPI.updateProjectEnv(selectedProjectId, {
-        agentMcpOverrides: newOverrides,
-      });
+      const updateFn = isWebMode()
+        ? getAPIClient().updateProjectEnv(selectedProjectId, { agentMcpOverrides: newOverrides })
+        : window.electronAPI.updateProjectEnv(selectedProjectId, { agentMcpOverrides: newOverrides });
+      await updateFn;
     } catch (error) {
       console.error('Failed to update agent MCP config:', error);
       setEnvConfig((prev) => prev ? { ...prev, agentMcpOverrides: currentOverrides } : null);
     }
   }, [selectedProjectId, envConfig]);
 
-  // Handle removing an MCP from an agent
   const handleRemoveMcp = useCallback(async (agentId: string, mcpId: string) => {
     if (!selectedProjectId || !envConfig) return;
 
@@ -798,21 +799,19 @@ export function AgentTools() {
       newOverrides[agentId] = newOverride;
     }
 
-    // Optimistic update
     setEnvConfig((prev) => prev ? { ...prev, agentMcpOverrides: newOverrides } : null);
 
-    // Save to backend
     try {
-      await window.electronAPI.updateProjectEnv(selectedProjectId, {
-        agentMcpOverrides: newOverrides,
-      });
+      const updateFn = isWebMode()
+        ? getAPIClient().updateProjectEnv(selectedProjectId, { agentMcpOverrides: newOverrides })
+        : window.electronAPI.updateProjectEnv(selectedProjectId, { agentMcpOverrides: newOverrides });
+      await updateFn;
     } catch (error) {
       console.error('Failed to update agent MCP config:', error);
       setEnvConfig((prev) => prev ? { ...prev, agentMcpOverrides: currentOverrides } : null);
     }
   }, [selectedProjectId, envConfig]);
 
-  // Handle saving a custom MCP server
   const handleSaveCustomServer = useCallback(async (server: CustomMcpServer) => {
     if (!selectedProjectId || !envConfig) return;
 
@@ -829,21 +828,19 @@ export function AgentTools() {
       newServers = [...currentServers, server];
     }
 
-    // Optimistic update
     setEnvConfig((prev) => prev ? { ...prev, customMcpServers: newServers } : null);
 
-    // Save to backend
     try {
-      await window.electronAPI.updateProjectEnv(selectedProjectId, {
-        customMcpServers: newServers,
-      });
+      const updateFn = isWebMode()
+        ? getAPIClient().updateProjectEnv(selectedProjectId, { customMcpServers: newServers })
+        : window.electronAPI.updateProjectEnv(selectedProjectId, { customMcpServers: newServers });
+      await updateFn;
     } catch (error) {
       console.error('Failed to save custom MCP server:', error);
       setEnvConfig((prev) => prev ? { ...prev, customMcpServers: currentServers } : null);
     }
   }, [selectedProjectId, envConfig]);
 
-  // Handle deleting a custom MCP server
   const handleDeleteCustomServer = useCallback(async (serverId: string) => {
     if (!selectedProjectId || !envConfig) return;
 
@@ -869,26 +866,23 @@ export function AgentTools() {
       }
     }
 
-    // Optimistic update
     setEnvConfig((prev) => prev ? {
       ...prev,
       customMcpServers: newServers,
       agentMcpOverrides: newOverrides,
     } : null);
 
-    // Save to backend
     try {
-      await window.electronAPI.updateProjectEnv(selectedProjectId, {
-        customMcpServers: newServers,
-        agentMcpOverrides: newOverrides,
-      });
+      const updateFn = isWebMode()
+        ? getAPIClient().updateProjectEnv(selectedProjectId, { customMcpServers: newServers, agentMcpOverrides: newOverrides })
+        : window.electronAPI.updateProjectEnv(selectedProjectId, { customMcpServers: newServers, agentMcpOverrides: newOverrides });
+      await updateFn;
     } catch (error) {
       console.error('Failed to delete custom MCP server:', error);
       setEnvConfig((prev) => prev ? { ...prev, customMcpServers: currentServers, agentMcpOverrides: currentOverrides } : null);
     }
   }, [selectedProjectId, envConfig]);
 
-  // Check health of all custom MCP servers
   const checkAllServersHealth = useCallback(async () => {
     const servers = envConfig?.customMcpServers || [];
     if (servers.length === 0) return;

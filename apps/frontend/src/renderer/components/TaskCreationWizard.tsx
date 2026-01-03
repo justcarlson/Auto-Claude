@@ -33,6 +33,7 @@ import { FileAutocomplete } from './FileAutocomplete';
 import { createTask, saveDraft, loadDraft, clearDraft, isDraftEmpty } from '../stores/task-store';
 import { useProjectStore } from '../stores/project-store';
 import { cn } from '../lib/utils';
+import { getAPIClient, isWebMode } from '../lib/api';
 import type { TaskCategory, TaskPriority, TaskComplexity, TaskImpact, TaskMetadata, ImageAttachment, TaskDraft, ModelType, ThinkingLevel, ReferencedFile } from '../../shared/types';
 import type { PhaseModelConfig, PhaseThinkingConfig } from '../../shared/types/settings';
 import {
@@ -203,12 +204,12 @@ export function TaskCreationWizard({
     if (!projectId) return;
 
     try {
-      // Get env config to check if there's a configured default branch
-      const result = await window.electronAPI.getProjectEnv(projectId);
+      const result = isWebMode()
+        ? await getAPIClient().getProjectEnv(projectId)
+        : await window.electronAPI.getProjectEnv(projectId);
       if (result.success && result.data?.defaultBranch) {
         setProjectDefaultBranch(result.data.defaultBranch);
       } else if (projectPath) {
-        // Fall back to auto-detect
         const detectResult = await window.electronAPI.detectMainBranch(projectPath);
         if (detectResult.success && detectResult.data) {
           setProjectDefaultBranch(detectResult.data);

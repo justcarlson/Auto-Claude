@@ -98,3 +98,104 @@ class VersionResponse(BaseModel):
     """Response model for version endpoint."""
 
     version: str = Field(..., description="Application version")
+
+
+# =============================================================================
+# PROJECT ENVIRONMENT MODELS
+# =============================================================================
+
+
+class McpServersConfig(BaseModel):
+    """MCP server configuration for a project."""
+
+    context7Enabled: bool | None = Field(default=True)
+    graphitiEnabled: bool | None = Field(default=None)
+    linearMcpEnabled: bool | None = Field(default=None)
+    electronEnabled: bool | None = Field(default=False)
+    puppeteerEnabled: bool | None = Field(default=False)
+
+
+class ProjectEnvConfig(BaseModel):
+    """Project environment configuration."""
+
+    claudeOAuthToken: str | None = Field(default=None)
+    claudeAuthStatus: str = Field(default="not_configured")
+    claudeTokenIsGlobal: bool | None = Field(default=None)
+
+    autoBuildModel: str | None = Field(default=None)
+
+    linearEnabled: bool = Field(default=False)
+    linearApiKey: str | None = Field(default=None)
+    linearTeamId: str | None = Field(default=None)
+    linearProjectId: str | None = Field(default=None)
+    linearRealtimeSync: bool | None = Field(default=None)
+
+    githubEnabled: bool = Field(default=False)
+    githubToken: str | None = Field(default=None)
+    githubRepo: str | None = Field(default=None)
+    githubAutoSync: bool | None = Field(default=None)
+    githubAuthMethod: str | None = Field(default=None)
+
+    gitlabEnabled: bool = Field(default=False)
+    gitlabInstanceUrl: str | None = Field(default=None)
+    gitlabToken: str | None = Field(default=None)
+    gitlabProject: str | None = Field(default=None)
+    gitlabAutoSync: bool | None = Field(default=None)
+
+    defaultBranch: str | None = Field(default=None)
+
+    graphitiEnabled: bool = Field(default=False)
+    graphitiProviderConfig: dict | None = Field(default=None)
+    openaiApiKey: str | None = Field(default=None)
+    openaiKeyIsGlobal: bool | None = Field(default=None)
+    graphitiDatabase: str | None = Field(default=None)
+    graphitiDbPath: str | None = Field(default=None)
+
+    enableFancyUi: bool = Field(default=True)
+
+    mcpServers: McpServersConfig | None = Field(default=None)
+    agentMcpOverrides: dict | None = Field(default=None)
+    customMcpServers: list | None = Field(default=None)
+
+
+class ProjectEnvConfigUpdate(BaseModel):
+    """Request model for updating project env config (all fields optional)."""
+
+    claudeOAuthToken: str | None = None
+    claudeAuthStatus: str | None = None
+    claudeTokenIsGlobal: bool | None = None
+
+    autoBuildModel: str | None = None
+
+    linearEnabled: bool | None = None
+    linearApiKey: str | None = None
+    linearTeamId: str | None = None
+    linearProjectId: str | None = None
+    linearRealtimeSync: bool | None = None
+
+    githubEnabled: bool | None = None
+    githubToken: str | None = None
+    githubRepo: str | None = None
+    githubAutoSync: bool | None = None
+    githubAuthMethod: str | None = None
+
+    gitlabEnabled: bool | None = None
+    gitlabInstanceUrl: str | None = None
+    gitlabToken: str | None = None
+    gitlabProject: str | None = None
+    gitlabAutoSync: bool | None = None
+
+    defaultBranch: str | None = None
+
+    graphitiEnabled: bool | None = None
+    graphitiProviderConfig: dict | None = None
+    openaiApiKey: str | None = None
+    openaiKeyIsGlobal: bool | None = None
+    graphitiDatabase: str | None = None
+    graphitiDbPath: str | None = None
+
+    enableFancyUi: bool | None = None
+
+    mcpServers: dict | None = None
+    agentMcpOverrides: dict | None = None
+    customMcpServers: list | None = None

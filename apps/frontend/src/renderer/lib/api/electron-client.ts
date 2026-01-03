@@ -2,6 +2,7 @@ import type {
   APIClient, 
   APIResult, 
   Project, 
+  ProjectEnvConfig,
   Task, 
   TaskCreateInput, 
   TaskUpdateInput, 
@@ -98,6 +99,16 @@ export class ElectronAPIClient implements APIClient {
   async saveSettings(settings: Partial<AppSettings>): Promise<APIResult<void>> {
     const result = await this.api.saveSettings(settings as Record<string, unknown>);
     return { success: result.success, error: result.error };
+  }
+
+  async getProjectEnv(projectId: string): Promise<APIResult<ProjectEnvConfig>> {
+    const result = await this.api.getProjectEnv(projectId);
+    return this.mapResult<ProjectEnvConfig>(result);
+  }
+
+  async updateProjectEnv(projectId: string, config: Partial<ProjectEnvConfig>): Promise<APIResult<ProjectEnvConfig>> {
+    const result = await this.api.updateProjectEnv(projectId, config as Record<string, unknown>);
+    return this.mapResult<ProjectEnvConfig>(result);
   }
 
   onTaskProgress(callback: (taskId: string, progress: unknown) => void): () => void {

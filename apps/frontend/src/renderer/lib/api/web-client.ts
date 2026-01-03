@@ -10,6 +10,7 @@ import type {
   APIClient, 
   APIResult, 
   Project, 
+  ProjectEnvConfig,
   Task, 
   TaskCreateInput, 
   TaskUpdateInput, 
@@ -99,6 +100,18 @@ export class WebAPIClient implements APIClient {
 
   async saveSettings(settings: Partial<AppSettings>): Promise<APIResult<void>> {
     return this.put('/settings', settings);
+  }
+
+  // ==========================================================================
+  // Project Environment
+  // ==========================================================================
+
+  async getProjectEnv(projectId: string): Promise<APIResult<ProjectEnvConfig>> {
+    return this.get(`/projects/${projectId}/env`);
+  }
+
+  async updateProjectEnv(projectId: string, config: Partial<ProjectEnvConfig>): Promise<APIResult<ProjectEnvConfig>> {
+    return this.put(`/projects/${projectId}/env`, config);
   }
 
   // ==========================================================================
