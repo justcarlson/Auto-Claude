@@ -15,12 +15,14 @@ from api.routes import (
     task_execution_router,
     tasks_router,
     terminals_router,
+    worktrees_router,
 )
 from api.services import (
     ProjectService,
     SettingsService,
     TaskExecutionService,
     TaskService,
+    WorktreeService,
 )
 from api.websocket.task_events import reset_task_clients, task_events_websocket
 from api.websocket.terminal import reset_terminal_manager, terminal_websocket
@@ -62,6 +64,7 @@ app.include_router(settings_router)
 app.include_router(task_execution_router)
 app.include_router(tasks_router)
 app.include_router(terminals_router)
+app.include_router(worktrees_router)
 
 # WebSocket routes
 app.websocket("/ws/terminal/{terminal_id}")(terminal_websocket)
@@ -76,6 +79,7 @@ async def startup_event():
     SettingsService.reset()
     TaskService.reset()
     TaskExecutionService.reset()
+    WorktreeService.reset()
     reset_terminal_manager()
     reset_task_clients()
 

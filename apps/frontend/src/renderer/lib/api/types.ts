@@ -7,8 +7,15 @@
  */
 
 import type { ProjectEnvConfig as SharedProjectEnvConfig } from '../../../shared/types/project';
+import type { 
+  WorktreeStatus, 
+  WorktreeDiff, 
+  WorktreeMergeResult, 
+  WorktreeListResult 
+} from '../../../shared/types/task';
 
 export type ProjectEnvConfig = SharedProjectEnvConfig;
+export type { WorktreeStatus, WorktreeDiff, WorktreeMergeResult, WorktreeListResult };
 
 // =============================================================================
 // RESULT TYPES
@@ -150,6 +157,14 @@ export interface APIClient {
   // Project environment
   getProjectEnv(projectId: string): Promise<APIResult<ProjectEnvConfig>>;
   updateProjectEnv(projectId: string, config: Partial<ProjectEnvConfig>): Promise<APIResult<ProjectEnvConfig>>;
+  
+  // Worktree operations
+  listWorktrees(projectId: string): Promise<APIResult<WorktreeListResult>>;
+  getWorktreeStatus(taskId: string): Promise<APIResult<WorktreeStatus>>;
+  getWorktreeDiff(taskId: string): Promise<APIResult<WorktreeDiff>>;
+  mergeWorktreePreview(taskId: string): Promise<APIResult<WorktreeMergeResult>>;
+  mergeWorktree(taskId: string, options?: { noCommit?: boolean }): Promise<APIResult<WorktreeMergeResult>>;
+  discardWorktree(taskId: string): Promise<APIResult<{ success: boolean; message: string }>>;
   
   // Event subscriptions (return cleanup functions)
   onTaskProgress(callback: (taskId: string, progress: unknown) => void): () => void;

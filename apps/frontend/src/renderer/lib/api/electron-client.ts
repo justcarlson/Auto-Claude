@@ -7,7 +7,11 @@ import type {
   TaskCreateInput, 
   TaskUpdateInput, 
   TaskStatus,
-  AppSettings 
+  AppSettings,
+  WorktreeStatus,
+  WorktreeDiff,
+  WorktreeMergeResult,
+  WorktreeListResult,
 } from './types';
 
 export class ElectronAPIClient implements APIClient {
@@ -179,6 +183,36 @@ export class ElectronAPIClient implements APIClient {
 
   onTaskStatusChange(callback: (taskId: string, status: TaskStatus) => void): () => void {
     return this.api.onTaskStatusChange(callback as (taskId: string, status: unknown) => void);
+  }
+
+  async listWorktrees(projectId: string): Promise<APIResult<WorktreeListResult>> {
+    const result = await this.api.listWorktrees(projectId);
+    return this.mapResult<WorktreeListResult>(result);
+  }
+
+  async getWorktreeStatus(taskId: string): Promise<APIResult<WorktreeStatus>> {
+    const result = await this.api.getWorktreeStatus(taskId);
+    return this.mapResult<WorktreeStatus>(result);
+  }
+
+  async getWorktreeDiff(taskId: string): Promise<APIResult<WorktreeDiff>> {
+    const result = await this.api.getWorktreeDiff(taskId);
+    return this.mapResult<WorktreeDiff>(result);
+  }
+
+  async mergeWorktreePreview(taskId: string): Promise<APIResult<WorktreeMergeResult>> {
+    const result = await this.api.mergeWorktreePreview(taskId);
+    return this.mapResult<WorktreeMergeResult>(result);
+  }
+
+  async mergeWorktree(taskId: string, options?: { noCommit?: boolean }): Promise<APIResult<WorktreeMergeResult>> {
+    const result = await this.api.mergeWorktree(taskId, options);
+    return this.mapResult<WorktreeMergeResult>(result);
+  }
+
+  async discardWorktree(taskId: string): Promise<APIResult<{ success: boolean; message: string }>> {
+    const result = await this.api.discardWorktree(taskId);
+    return this.mapResult<{ success: boolean; message: string }>(result);
   }
 
   private mapResult<T>(result: { success: boolean; data?: unknown; error?: string }): APIResult<T> {

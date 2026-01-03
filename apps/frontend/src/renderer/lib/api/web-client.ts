@@ -15,7 +15,11 @@ import type {
   TaskCreateInput, 
   TaskUpdateInput, 
   TaskStatus,
-  AppSettings 
+  AppSettings,
+  WorktreeStatus,
+  WorktreeDiff,
+  WorktreeMergeResult,
+  WorktreeListResult,
 } from './types';
 
 /**
@@ -139,6 +143,34 @@ export class WebAPIClient implements APIClient {
 
   async updateProjectEnv(projectId: string, config: Partial<ProjectEnvConfig>): Promise<APIResult<ProjectEnvConfig>> {
     return this.put(`/projects/${projectId}/env`, config);
+  }
+
+  // ==========================================================================
+  // Worktree Operations
+  // ==========================================================================
+
+  async listWorktrees(projectId: string): Promise<APIResult<WorktreeListResult>> {
+    return this.get(`/projects/${projectId}/worktrees`);
+  }
+
+  async getWorktreeStatus(taskId: string): Promise<APIResult<WorktreeStatus>> {
+    return this.get(`/worktrees/${taskId}/status`);
+  }
+
+  async getWorktreeDiff(taskId: string): Promise<APIResult<WorktreeDiff>> {
+    return this.get(`/worktrees/${taskId}/diff`);
+  }
+
+  async mergeWorktreePreview(taskId: string): Promise<APIResult<WorktreeMergeResult>> {
+    return this.get(`/worktrees/${taskId}/merge/preview`);
+  }
+
+  async mergeWorktree(taskId: string, options?: { noCommit?: boolean }): Promise<APIResult<WorktreeMergeResult>> {
+    return this.post(`/worktrees/${taskId}/merge`, options || {});
+  }
+
+  async discardWorktree(taskId: string): Promise<APIResult<{ success: boolean; message: string }>> {
+    return this.post(`/worktrees/${taskId}/discard`, {});
   }
 
   // ==========================================================================

@@ -324,3 +324,145 @@ class TerminalAliveResponse(BaseModel):
     """Response model for checking terminal alive status."""
 
     alive: bool = Field(..., description="Whether the terminal is running")
+
+
+# =============================================================================
+# WORKTREE MODELS
+# =============================================================================
+
+
+class WorktreeStatusResponse(BaseModel):
+    """Response model for worktree status."""
+
+    exists: bool = Field(..., description="Whether worktree exists for this task")
+    worktreePath: str | None = Field(default=None, description="Path to worktree")
+    branch: str | None = Field(default=None, description="Branch name")
+    baseBranch: str | None = Field(default=None, description="Base branch name")
+    commitCount: int | None = Field(default=None, description="Number of commits ahead")
+    filesChanged: int | None = Field(
+        default=None, description="Number of files changed"
+    )
+    additions: int | None = Field(default=None, description="Number of lines added")
+    deletions: int | None = Field(default=None, description="Number of lines deleted")
+
+
+class WorktreeDiffFile(BaseModel):
+    """Model for a file in a diff."""
+
+    path: str = Field(..., description="File path relative to project root")
+    status: str = Field(..., description="added, modified, deleted, or renamed")
+    additions: int = Field(default=0, description="Lines added")
+    deletions: int = Field(default=0, description="Lines deleted")
+
+
+class WorktreeDiffResponse(BaseModel):
+    """Response model for worktree diff."""
+
+    files: list[WorktreeDiffFile] = Field(
+        default_factory=list, description="Changed files"
+    )
+    summary: str = Field(default="", description="Summary of changes")
+
+
+class MergeConflict(BaseModel):
+    """Model for a merge conflict."""
+
+    file: str = Field(..., description="File with conflict")
+    location: str = Field(default="", description="Conflict location")
+    tasks: list[str] = Field(default_factory=list, description="Tasks involved")
+    severity: str = Field(default="none", description="Conflict severity")
+    canAutoMerge: bool = Field(default=False, description="Can be auto-merged")
+    strategy: str | None = Field(default=None, description="Merge strategy")
+    reason: str = Field(default="", description="Conflict reason")
+    type: str | None = Field(default=None, description="Conflict type")
+
+
+class GitConflictInfo(BaseModel):
+    """Model for Git-level conflict information."""
+
+    hasConflicts: bool = Field(default=False)
+    conflictingFiles: list[str] = Field(default_factory=list)
+    needsRebase: bool = Field(default=False)
+    commitsBehind: int = Field(default=0)
+    baseBranch: str = Field(default="")
+    specBranch: str = Field(default="")
+
+
+class MergeStats(BaseModel):
+    """Model for merge statistics."""
+
+    totalFiles: int = Field(default=0)
+    conflictFiles: int = Field(default=0)
+    totalConflicts: int = Field(default=0)
+    autoMergeable: int = Field(default=0)
+    aiResolved: int | None = Field(default=None)
+    humanRequired: int | None = Field(default=None)
+    hasGitConflicts: bool | None = Field(default=None)
+
+
+class MergePreview(BaseModel):
+    """Model for merge preview results."""
+
+    files: list[str] = Field(default_factory=list)
+    conflicts: list[MergeConflict] = Field(default_factory=list)
+    summary: MergeStats = Field(default_factory=MergeStats)
+    gitConflicts: GitConflictInfo | None = Field(default=None)
+
+
+class WorktreeMergeRequest(BaseModel):
+    """Request model for merging a worktree."""
+
+    noCommit: bool = Field(
+        default=False, description="Stage changes without committing"
+    )
+
+
+class WorktreeMergeResponse(BaseModel):
+    """Response model for worktree merge."""
+
+    success: bool = Field(..., description="Whether merge succeeded")
+    message: str = Field(..., description="Status message")
+    merged: bool | None = Field(default=None, description="Whether changes were merged")
+    conflictFiles: list[str] | None = Field(
+        default=None, description="Files with conflicts"
+    )
+    staged: bool | None = Field(default=None, description="Whether changes are staged")
+    alreadyStaged: bool | None = Field(
+        default=None, description="Whether already staged"
+    )
+    projectPath: str | None = Field(default=None, description="Project path")
+    suggestedCommitMessage: str | None = Field(
+        default=None, description="AI-generated commit message"
+    )
+    conflicts: list[MergeConflict] | None = Field(default=None)
+    stats: MergeStats | None = Field(default=None)
+    gitConflicts: GitConflictInfo | None = Field(default=None)
+    preview: MergePreview | None = Field(default=None)
+
+
+class WorktreeDiscardResponse(BaseModel):
+    """Response model for worktree discard."""
+
+    success: bool = Field(..., description="Whether discard succeeded")
+    message: str = Field(..., description="Status message")
+
+
+class WorktreeListItem(BaseModel):
+    """Model for a worktree list item."""
+
+    specName: str = Field(..., description="Spec folder name")
+    path: str = Field(..., description="Worktree path")
+    branch: str = Field(..., description="Branch name")
+    baseBranch: str = Field(..., description="Base branch name")
+    commitCount: int = Field(default=0, description="Commits ahead")
+    filesChanged: int = Field(default=0, description="Files changed")
+    additions: int = Field(default=0, description="Lines added")
+    deletions: int = Field(default=0, description="Lines deleted")
+
+
+class WorktreeListResponse(BaseModel):
+    """Response model for listing worktrees."""
+
+    worktrees: list[WorktreeListItem] = Field(
+        default_factory=list, description="List of worktrees"
+    )

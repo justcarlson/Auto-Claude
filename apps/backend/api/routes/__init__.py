@@ -5,6 +5,7 @@ from .settings import router as settings_router
 from .task_execution import router as task_execution_router
 from .tasks import router as tasks_router
 from .terminals import router as terminals_router
+from .worktrees import router as worktrees_router
 
 __all__ = [
     "health_router",
@@ -13,4 +14,5 @@ __all__ = [
     "task_execution_router",
     "tasks_router",
     "terminals_router",
+    "worktrees_router",
 ]
