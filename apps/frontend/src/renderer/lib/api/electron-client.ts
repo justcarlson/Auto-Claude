@@ -18,6 +18,7 @@ import type {
   GitInitResult,
   DirectoryListResult,
   FileContentResult,
+  TaskLogs,
 } from './types';
 
 export class ElectronAPIClient implements APIClient {
@@ -243,6 +244,10 @@ export class ElectronAPIClient implements APIClient {
 
   async readFile(_projectId: string, _path: string): Promise<APIResult<FileContentResult>> {
     return { success: false, error: 'File reading not available in Electron mode yet' };
+  }
+
+  async getTaskLogs(_taskId: string): Promise<APIResult<TaskLogs>> {
+    return { success: false, error: 'Task logs via API not available in Electron mode. Use window.electronAPI.getTaskLogs instead.' };
   }
 
   private mapResult<T>(result: { success: boolean; data?: unknown; error?: string }): APIResult<T> {

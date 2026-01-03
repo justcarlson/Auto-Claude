@@ -26,6 +26,7 @@ import type {
   GitInitResult,
   DirectoryListResult,
   FileContentResult,
+  TaskLogs,
 } from './types';
 
 /**
@@ -209,6 +210,14 @@ export class WebAPIClient implements APIClient {
 
   async readFile(projectId: string, path: string): Promise<APIResult<FileContentResult>> {
     return this.get(`/fs/read?project_id=${encodeURIComponent(projectId)}&path=${encodeURIComponent(path)}`);
+  }
+
+  // ==========================================================================
+  // Task Logs
+  // ==========================================================================
+
+  async getTaskLogs(taskId: string): Promise<APIResult<TaskLogs>> {
+    return this.get(`/tasks/${encodeURIComponent(taskId)}/logs`);
   }
 
   // ==========================================================================

@@ -11,11 +11,12 @@ import type {
   WorktreeStatus, 
   WorktreeDiff, 
   WorktreeMergeResult, 
-  WorktreeListResult 
+  WorktreeListResult,
+  TaskLogs,
 } from '../../../shared/types/task';
 
 export type ProjectEnvConfig = SharedProjectEnvConfig;
-export type { WorktreeStatus, WorktreeDiff, WorktreeMergeResult, WorktreeListResult };
+export type { WorktreeStatus, WorktreeDiff, WorktreeMergeResult, WorktreeListResult, TaskLogs };
 
 // =============================================================================
 // RESULT TYPES
@@ -231,6 +232,9 @@ export interface APIClient {
   // Filesystem operations
   listDirectory(projectId: string, path?: string): Promise<APIResult<DirectoryListResult>>;
   readFile(projectId: string, path: string): Promise<APIResult<FileContentResult>>;
+  
+  // Task logs
+  getTaskLogs(taskId: string): Promise<APIResult<TaskLogs>>;
   
   // Event subscriptions (return cleanup functions)
   onTaskProgress(callback: (taskId: string, progress: unknown) => void): () => void;
