@@ -19,6 +19,7 @@ import { Checkbox } from '../../ui/checkbox';
 import { cn } from '../../../lib/utils';
 import type { WorktreeStatus, MergeConflict, MergeStats, GitConflictInfo, SupportedIDE, SupportedTerminal } from '../../../../shared/types';
 import { useSettingsStore } from '../../../stores/settings-store';
+import { isWebMode } from '../../../lib/api';
 
 interface WorkspaceStatusProps {
   worktreeStatus: WorktreeStatus;
@@ -201,8 +202,7 @@ export function WorkspaceStatus({
           </div>
         )}
 
-        {/* Open in IDE/Terminal buttons */}
-        {worktreeStatus.worktreePath && (
+        {worktreeStatus.worktreePath && !isWebMode() && (
           <div className="flex gap-2 mt-3">
             <Button
               variant="outline"

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Bug, FolderOpen, Copy, FileText, RefreshCw, Loader2, Check, AlertCircle } from 'lucide-react';
 import { Button } from '../ui/button';
 import { SettingsSection } from './SettingsSection';
+import { isWebMode } from '../../lib/api';
 
 interface DebugInfo {
   systemInfo: Record<string, string>;
@@ -67,14 +68,16 @@ export function DebugSettings() {
       <div className="space-y-6">
         {/* Quick Actions */}
         <div className="flex flex-wrap gap-3">
-          <Button
-            variant="outline"
-            onClick={handleOpenLogsFolder}
-            className="flex items-center gap-2"
-          >
-            <FolderOpen className="h-4 w-4" />
-            {t('debug.openLogsFolder', 'Open Logs Folder')}
-          </Button>
+          {!isWebMode() && (
+            <Button
+              variant="outline"
+              onClick={handleOpenLogsFolder}
+              className="flex items-center gap-2"
+            >
+              <FolderOpen className="h-4 w-4" />
+              {t('debug.openLogsFolder', 'Open Logs Folder')}
+            </Button>
+          )}
 
           <Button
             variant="outline"

@@ -14,9 +14,10 @@ import {
 } from './ui/dialog';
 import { cn } from '../lib/utils';
 import { addProject } from '../stores/project-store';
+import { isWebMode } from '../lib/api';
 import type { Project } from '../../shared/types';
 
-type ModalStep = 'choose' | 'create-form';
+type ModalStep = 'choose' | 'create-form' | 'open-form';
 
 interface AddProjectModalProps {
   open: boolean;
@@ -29,23 +30,24 @@ export function AddProjectModal({ open, onOpenChange, onProjectAdded }: AddProje
   const [step, setStep] = useState<ModalStep>('choose');
   const [projectName, setProjectName] = useState('');
   const [projectLocation, setProjectLocation] = useState('');
+  const [existingProjectPath, setExistingProjectPath] = useState('');
   const [initGit, setInitGit] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Reset state when modal opens
   useEffect(() => {
     if (open) {
       setStep('choose');
       setProjectName('');
       setProjectLocation('');
+      setExistingProjectPath('');
       setInitGit(true);
       setError(null);
     }
   }, [open]);
 
-  // Load default location on mount
   useEffect(() => {
+    if (isWebMode()) return;
     const loadDefaultLocation = async () => {
       try {
         const defaultDir = await window.electronAPI.getDefaultProjectLocation();
@@ -60,12 +62,25 @@ export function AddProjectModal({ open, onOpenChange, onProjectAdded }: AddProje
   }, []);
 
   const handleOpenExisting = async () => {
+    if (isWebMode()) {
+      setStep('open-form');
+      return;
+    }
     try {
       const path = await window.electronAPI.selectDirectory();
       if (path) {
-        const project = await addProject(path);
-        if (project) {
-          // Auto-detect and save the main branch for the project
+        await openProjectByPath(path);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('addProject.failedToOpen'));
+    }
+  };
+
+  const openProjectByPath = async (path: string) => {
+    try {
+      const project = await addProject(path);
+      if (project) {
+        if (!isWebMode()) {
           try {
             const mainBranchResult = await window.electronAPI.detectMainBranch(path);
             if (mainBranchResult.success && mainBranchResult.data) {
@@ -74,14 +89,28 @@ export function AddProjectModal({ open, onOpenChange, onProjectAdded }: AddProje
               });
             }
           } catch {
-            // Non-fatal - main branch can be set later in settings
+            // Non-fatal
           }
-          onProjectAdded?.(project, !project.autoBuildPath);
-          onOpenChange(false);
         }
+        onProjectAdded?.(project, !project.autoBuildPath);
+        onOpenChange(false);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : t('addProject.failedToOpen'));
+    }
+  };
+
+  const handleOpenExistingSubmit = async () => {
+    if (!existingProjectPath.trim()) {
+      setError(t('addProject.pathRequired', 'Project path is required'));
+      return;
+    }
+    setIsCreating(true);
+    setError(null);
+    try {
+      await openProjectByPath(existingProjectPath.trim());
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -210,6 +239,48 @@ export function AddProjectModal({ open, onOpenChange, onProjectAdded }: AddProje
     </>
   );
 
+  const renderOpenForm = () => (
+    <>
+      <DialogHeader>
+        <DialogTitle>{t('addProject.openExisting')}</DialogTitle>
+        <DialogDescription>
+          {t('addProject.openExistingPathDescription', 'Enter the full path to your existing project directory.')}
+        </DialogDescription>
+      </DialogHeader>
+
+      <div className="py-4 space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="existing-project-path">{t('addProject.projectPath', 'Project Path')}</Label>
+          <Input
+            id="existing-project-path"
+            placeholder={t('addProject.projectPathPlaceholder', '/path/to/your/project')}
+            value={existingProjectPath}
+            onChange={(e) => setExistingProjectPath(e.target.value)}
+            autoFocus
+          />
+          <p className="text-xs text-muted-foreground">
+            {t('addProject.projectPathHelp', 'Enter the absolute path to a git repository on the server.')}
+          </p>
+        </div>
+
+        {error && (
+          <div className="text-sm text-destructive bg-destructive/10 rounded-lg p-3">
+            {error}
+          </div>
+        )}
+      </div>
+
+      <DialogFooter>
+        <Button variant="outline" onClick={() => setStep('choose')} disabled={isCreating}>
+          {t('addProject.back')}
+        </Button>
+        <Button onClick={handleOpenExistingSubmit} disabled={isCreating}>
+          {isCreating ? t('addProject.opening', 'Opening...') : t('addProject.openProject', 'Open Project')}
+        </Button>
+      </DialogFooter>
+    </>
+  );
+
   const renderCreateForm = () => (
     <>
       <DialogHeader>
@@ -246,9 +317,11 @@ export function AddProjectModal({ open, onOpenChange, onProjectAdded }: AddProje
               onChange={(e) => setProjectLocation(e.target.value)}
               className="flex-1"
             />
-            <Button variant="outline" onClick={handleSelectLocation}>
-              {t('addProject.browse')}
-            </Button>
+            {!isWebMode() && (
+              <Button variant="outline" onClick={handleSelectLocation}>
+                {t('addProject.browse')}
+              </Button>
+            )}
           </div>
           {projectLocation && projectName && (
             <p className="text-xs text-muted-foreground">
@@ -289,10 +362,18 @@ export function AddProjectModal({ open, onOpenChange, onProjectAdded }: AddProje
     </>
   );
 
+  const renderStep = () => {
+    switch (step) {
+      case 'choose': return renderChooseStep();
+      case 'open-form': return renderOpenForm();
+      case 'create-form': return renderCreateForm();
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
-        {step === 'choose' ? renderChooseStep() : renderCreateForm()}
+        {renderStep()}
       </DialogContent>
     </Dialog>
   );

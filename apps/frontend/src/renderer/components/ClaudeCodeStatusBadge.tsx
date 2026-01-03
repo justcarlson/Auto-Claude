@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Terminal, Check, AlertTriangle, X, Loader2, Download, RefreshCw, ExternalLink } from 'lucide-react';
 import { Button } from './ui/button';
+import { openExternalLink } from '../lib/api';
 import {
   Popover,
   PopoverContent,
@@ -293,7 +294,7 @@ export function ClaudeCodeStatusBadge({ className }: ClaudeCodeStatusBadgeProps)
             variant="link"
             size="sm"
             className="w-full text-xs text-muted-foreground gap-1"
-            onClick={() => window.electronAPI?.openExternal?.('https://claude.ai/code')}
+            onClick={() => openExternalLink('https://claude.ai/code')}
           >
             {t('navigation:claudeCode.learnMore', 'Learn more about Claude Code')}
             <ExternalLink className="h-3 w-3" />

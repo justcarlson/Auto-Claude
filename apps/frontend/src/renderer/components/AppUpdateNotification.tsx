@@ -6,6 +6,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { Button } from './ui/button';
+import { isWebMode } from '../lib/api';
 import { Progress } from './ui/progress';
 import {
   Dialog,
@@ -127,7 +128,7 @@ export function AppUpdateNotification() {
     setIsOpen(false);
   };
 
-  if (!updateInfo) {
+  if (!updateInfo || isWebMode()) {
     return null;
   }
 

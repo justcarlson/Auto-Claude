@@ -15,6 +15,7 @@ import { Label } from '../ui/label';
 import { Switch } from '../ui/switch';
 import { Progress } from '../ui/progress';
 import { cn } from '../../lib/utils';
+import { isWebMode, openExternalLink } from '../../lib/api';
 import { SettingsSection } from './SettingsSection';
 import type {
   AppSettings,
@@ -205,6 +206,20 @@ export function AdvancedSettings({ settings, onSettingsChange, section, version 
   };
 
   if (section === 'updates') {
+    if (isWebMode()) {
+      return (
+        <SettingsSection
+          title={t('updates.title')}
+          description={t('updates.description')}
+        >
+          <div className="rounded-lg border border-border bg-muted/50 p-5">
+            <p className="text-sm text-muted-foreground">
+              {t('updates.webModeNotice', 'App updates are managed by your deployment platform in web mode.')}
+            </p>
+          </div>
+        </SettingsSection>
+      );
+    }
     return (
       <SettingsSection
         title={t('updates.title')}
@@ -353,7 +368,7 @@ export function AdvancedSettings({ settings, onSettingsChange, section, version 
 
                     {sourceUpdateCheck.releaseUrl && (
                       <button
-                        onClick={() => window.electronAPI.openExternal(sourceUpdateCheck.releaseUrl!)}
+                        onClick={() => openExternalLink(sourceUpdateCheck.releaseUrl!)}
                         className="inline-flex items-center gap-1.5 text-sm text-info hover:text-info/80 hover:underline transition-colors"
                       >
                         <ExternalLink className="h-3.5 w-3.5" />

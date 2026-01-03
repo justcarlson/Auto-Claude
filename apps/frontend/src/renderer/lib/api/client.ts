@@ -36,6 +36,24 @@ function isElectron(): boolean {
 }
 
 /**
+ * Open an external URL in the browser.
+ * In Electron mode, uses shell.openExternal via IPC.
+ * In Web mode, uses window.open.
+ */
+export function openExternalLink(url: string): void {
+  if (isWebMode()) {
+    // In web mode, use window.open with noopener for security
+    window.open(url, '_blank', 'noopener,noreferrer');
+  } else if (typeof window !== 'undefined' && window.electronAPI?.openExternal) {
+    // In Electron mode, use the IPC handler
+    window.electronAPI.openExternal(url);
+  } else {
+    // Fallback to window.open
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+}
+
+/**
  * Create an API client for the current environment.
  * Uses synchronous require to avoid async initialization complexity.
  */
