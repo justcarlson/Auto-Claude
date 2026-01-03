@@ -113,6 +113,40 @@ export interface AppSettings {
 }
 
 // =============================================================================
+// GIT TYPES
+// =============================================================================
+
+export interface GitBranch {
+  name: string;
+  current: boolean;
+}
+
+export interface GitBranchesResult {
+  branches: GitBranch[];
+}
+
+export interface GitMainBranchResult {
+  branch: string;
+  detected: boolean;
+}
+
+export interface GitStatusResult {
+  isRepo: boolean;
+  isDirty: boolean;
+  branch: string | null;
+  untrackedFiles: string[];
+  modifiedFiles: string[];
+  stagedFiles: string[];
+}
+
+export interface GitInitResult {
+  success: boolean;
+  initialized: boolean;
+  alreadyRepo: boolean;
+  message?: string;
+}
+
+// =============================================================================
 // API CLIENT INTERFACE
 // =============================================================================
 
@@ -165,6 +199,12 @@ export interface APIClient {
   mergeWorktreePreview(taskId: string): Promise<APIResult<WorktreeMergeResult>>;
   mergeWorktree(taskId: string, options?: { noCommit?: boolean }): Promise<APIResult<WorktreeMergeResult>>;
   discardWorktree(taskId: string): Promise<APIResult<{ success: boolean; message: string }>>;
+  
+  // Git operations
+  getGitBranches(projectId: string): Promise<APIResult<GitBranchesResult>>;
+  getGitMainBranch(projectId: string): Promise<APIResult<GitMainBranchResult>>;
+  getGitStatus(projectId: string): Promise<APIResult<GitStatusResult>>;
+  initGitRepo(projectId: string): Promise<APIResult<GitInitResult>>;
   
   // Event subscriptions (return cleanup functions)
   onTaskProgress(callback: (taskId: string, progress: unknown) => void): () => void;

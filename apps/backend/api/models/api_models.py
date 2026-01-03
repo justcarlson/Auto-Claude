@@ -466,3 +466,60 @@ class WorktreeListResponse(BaseModel):
     worktrees: list[WorktreeListItem] = Field(
         default_factory=list, description="List of worktrees"
     )
+
+
+# =============================================================================
+# GIT OPERATIONS MODELS
+# =============================================================================
+
+
+class GitBranch(BaseModel):
+    """Model for a git branch."""
+
+    name: str = Field(..., description="Branch name")
+    current: bool = Field(
+        default=False, description="Whether this is the current branch"
+    )
+
+
+class GitBranchesResponse(BaseModel):
+    """Response model for listing branches."""
+
+    branches: list[GitBranch] = Field(
+        default_factory=list, description="List of branches"
+    )
+
+
+class GitMainBranchResponse(BaseModel):
+    """Response model for detecting main branch."""
+
+    branch: str = Field(..., description="Detected main branch name")
+    detected: bool = Field(default=True, description="Whether branch was auto-detected")
+
+
+class GitStatusResponse(BaseModel):
+    """Response model for git status."""
+
+    isRepo: bool = Field(..., description="Whether directory is a git repo")
+    isDirty: bool = Field(
+        default=False, description="Whether there are uncommitted changes"
+    )
+    branch: str | None = Field(default=None, description="Current branch name")
+    untrackedFiles: list[str] = Field(
+        default_factory=list, description="Untracked files"
+    )
+    modifiedFiles: list[str] = Field(default_factory=list, description="Modified files")
+    stagedFiles: list[str] = Field(default_factory=list, description="Staged files")
+
+
+class GitInitResponse(BaseModel):
+    """Response model for git init."""
+
+    success: bool = Field(..., description="Whether operation succeeded")
+    initialized: bool = Field(
+        default=False, description="Whether repo was newly initialized"
+    )
+    alreadyRepo: bool = Field(
+        default=False, description="Whether directory was already a repo"
+    )
+    message: str | None = Field(default=None, description="Status message")

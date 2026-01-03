@@ -9,6 +9,7 @@ Provides REST and WebSocket endpoints for the React frontend.
 import os
 
 from api.routes import (
+    git_router,
     health_router,
     projects_router,
     settings_router,
@@ -18,6 +19,7 @@ from api.routes import (
     worktrees_router,
 )
 from api.services import (
+    GitService,
     ProjectService,
     SettingsService,
     TaskExecutionService,
@@ -58,6 +60,7 @@ app.add_middleware(
 )
 
 # Include routers
+app.include_router(git_router)
 app.include_router(health_router)
 app.include_router(projects_router)
 app.include_router(settings_router)
@@ -75,6 +78,7 @@ app.websocket("/ws/tasks/{task_id}/events")(task_events_websocket)
 async def startup_event():
     """Initialize resources on startup."""
     # Reset services for fresh start
+    GitService.reset()
     ProjectService.reset()
     SettingsService.reset()
     TaskService.reset()

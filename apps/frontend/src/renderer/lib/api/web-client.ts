@@ -20,6 +20,10 @@ import type {
   WorktreeDiff,
   WorktreeMergeResult,
   WorktreeListResult,
+  GitBranchesResult,
+  GitMainBranchResult,
+  GitStatusResult,
+  GitInitResult,
 } from './types';
 
 /**
@@ -171,6 +175,26 @@ export class WebAPIClient implements APIClient {
 
   async discardWorktree(taskId: string): Promise<APIResult<{ success: boolean; message: string }>> {
     return this.post(`/worktrees/${taskId}/discard`, {});
+  }
+
+  // ==========================================================================
+  // Git Operations
+  // ==========================================================================
+
+  async getGitBranches(projectId: string): Promise<APIResult<GitBranchesResult>> {
+    return this.get(`/projects/${projectId}/git/branches`);
+  }
+
+  async getGitMainBranch(projectId: string): Promise<APIResult<GitMainBranchResult>> {
+    return this.get(`/projects/${projectId}/git/main-branch`);
+  }
+
+  async getGitStatus(projectId: string): Promise<APIResult<GitStatusResult>> {
+    return this.get(`/projects/${projectId}/git/status`);
+  }
+
+  async initGitRepo(projectId: string): Promise<APIResult<GitInitResult>> {
+    return this.post(`/projects/${projectId}/git/init`, {});
   }
 
   // ==========================================================================

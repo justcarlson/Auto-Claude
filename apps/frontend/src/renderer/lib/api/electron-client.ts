@@ -12,6 +12,10 @@ import type {
   WorktreeDiff,
   WorktreeMergeResult,
   WorktreeListResult,
+  GitBranchesResult,
+  GitMainBranchResult,
+  GitStatusResult,
+  GitInitResult,
 } from './types';
 
 export class ElectronAPIClient implements APIClient {
@@ -213,6 +217,22 @@ export class ElectronAPIClient implements APIClient {
   async discardWorktree(taskId: string): Promise<APIResult<{ success: boolean; message: string }>> {
     const result = await this.api.discardWorktree(taskId);
     return this.mapResult<{ success: boolean; message: string }>(result);
+  }
+
+  async getGitBranches(_projectId: string): Promise<APIResult<GitBranchesResult>> {
+    return { success: false, error: 'Git branches not available in Electron mode yet' };
+  }
+
+  async getGitMainBranch(_projectId: string): Promise<APIResult<GitMainBranchResult>> {
+    return { success: false, error: 'Git main branch detection not available in Electron mode yet' };
+  }
+
+  async getGitStatus(_projectId: string): Promise<APIResult<GitStatusResult>> {
+    return { success: false, error: 'Git status not available in Electron mode yet' };
+  }
+
+  async initGitRepo(_projectId: string): Promise<APIResult<GitInitResult>> {
+    return { success: false, error: 'Git init not available in Electron mode yet' };
   }
 
   private mapResult<T>(result: { success: boolean; data?: unknown; error?: string }): APIResult<T> {

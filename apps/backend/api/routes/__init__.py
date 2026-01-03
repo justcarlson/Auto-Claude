@@ -1,4 +1,5 @@
 # API Routes
+from .git import router as git_router
 from .health import router as health_router
 from .projects import router as projects_router
 from .settings import router as settings_router
@@ -8,6 +9,7 @@ from .terminals import router as terminals_router
 from .worktrees import router as worktrees_router
 
 __all__ = [
+    "git_router",
     "health_router",
     "projects_router",
     "settings_router",
