@@ -175,9 +175,12 @@ export interface TerminalClient {
   
   sendInput(data: string): void;
   resize(cols: number, rows: number): void;
+  setClaudeSession(sessionId: string): void;
   
   onOutput(callback: (data: string) => void): () => void;
   onConnected(callback: () => void): () => void;
   onDisconnected(callback: (reason?: string) => void): () => void;
   onError(callback: (error: string) => void): () => void;
+  onTitle(callback: (title: string) => void): () => void;
+  onClaudeSession(callback: (sessionId: string) => void): () => void;
 }

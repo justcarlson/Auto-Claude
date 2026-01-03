@@ -282,3 +282,45 @@ class ProjectEnvConfigUpdate(BaseModel):
     mcpServers: dict | None = None
     agentMcpOverrides: dict | None = None
     customMcpServers: list | None = None
+
+
+# =============================================================================
+# TERMINAL MODELS
+# =============================================================================
+
+
+class TerminalCreateRequest(BaseModel):
+    """Request model for creating a terminal session."""
+
+    cwd: str | None = Field(default=None, description="Working directory")
+    shell: str | None = Field(default=None, description="Shell executable path")
+    cols: int = Field(default=80, description="Terminal columns")
+    rows: int = Field(default=24, description="Terminal rows")
+
+
+class TerminalCreateResponse(BaseModel):
+    """Response model for terminal creation."""
+
+    session_id: str = Field(..., description="Unique terminal session ID")
+
+
+class TerminalSession(BaseModel):
+    """Response model for a terminal session."""
+
+    id: str = Field(..., description="Terminal session ID")
+    cwd: str = Field(..., description="Working directory")
+    alive: bool = Field(..., description="Whether the terminal is still running")
+
+
+class TerminalSessionsResponse(BaseModel):
+    """Response model for listing terminal sessions."""
+
+    sessions: list[TerminalSession] = Field(
+        default_factory=list, description="Active terminal sessions"
+    )
+
+
+class TerminalAliveResponse(BaseModel):
+    """Response model for checking terminal alive status."""
+
+    alive: bool = Field(..., description="Whether the terminal is running")

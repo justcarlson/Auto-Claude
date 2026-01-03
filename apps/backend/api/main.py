@@ -14,6 +14,7 @@ from api.routes import (
     settings_router,
     task_execution_router,
     tasks_router,
+    terminals_router,
 )
 from api.services import (
     ProjectService,
@@ -60,6 +61,7 @@ app.include_router(projects_router)
 app.include_router(settings_router)
 app.include_router(task_execution_router)
 app.include_router(tasks_router)
+app.include_router(terminals_router)
 
 # WebSocket routes
 app.websocket("/ws/terminal/{terminal_id}")(terminal_websocket)

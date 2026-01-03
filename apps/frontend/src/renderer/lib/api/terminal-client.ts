@@ -24,7 +24,12 @@ interface ResizeMessage {
   rows: number;
 }
 
-type OutgoingMessage = InputMessage | ResizeMessage;
+interface SetClaudeSessionMessage {
+  type: 'set_claude_session';
+  session_id: string;
+}
+
+type OutgoingMessage = InputMessage | ResizeMessage | SetClaudeSessionMessage;
 
 /**
  * Message types received from server
@@ -48,7 +53,18 @@ interface PongMessage {
   type: 'pong';
 }
 
-type IncomingMessage = OutputMessage | ConnectedMessage | ErrorMessage | PongMessage;
+interface TitleMessage {
+  type: 'title';
+  terminal_id: string;
+  title: string;
+}
+
+interface ClaudeSessionMessage {
+  type: 'claude_session';
+  session_id: string;
+}
+
+type IncomingMessage = OutputMessage | ConnectedMessage | ErrorMessage | PongMessage | TitleMessage | ClaudeSessionMessage;
 
 /**
  * TerminalWebSocket implements TerminalClient interface for WebSocket-based terminal access.
@@ -78,6 +94,8 @@ export class TerminalWebSocket implements TerminalClient {
   private connectedCallbacks: Set<() => void> = new Set();
   private disconnectedCallbacks: Set<(reason?: string) => void> = new Set();
   private errorCallbacks: Set<(error: string) => void> = new Set();
+  private titleCallbacks: Set<(title: string) => void> = new Set();
+  private claudeSessionCallbacks: Set<(sessionId: string) => void> = new Set();
   
   // Message queue for messages sent before connection
   private messageQueue: OutgoingMessage[] = [];
@@ -167,6 +185,24 @@ export class TerminalWebSocket implements TerminalClient {
     };
   }
 
+  onTitle(callback: (title: string) => void): () => void {
+    this.titleCallbacks.add(callback);
+    return () => {
+      this.titleCallbacks.delete(callback);
+    };
+  }
+
+  onClaudeSession(callback: (sessionId: string) => void): () => void {
+    this.claudeSessionCallbacks.add(callback);
+    return () => {
+      this.claudeSessionCallbacks.delete(callback);
+    };
+  }
+
+  setClaudeSession(sessionId: string): void {
+    this.send({ type: 'set_claude_session', session_id: sessionId });
+  }
+
   // ==========================================================================
   // Private Methods
   // ==========================================================================
@@ -209,6 +245,14 @@ export class TerminalWebSocket implements TerminalClient {
           
         case 'pong':
           // Heartbeat response - no action needed
+          break;
+          
+        case 'title':
+          this.titleCallbacks.forEach((cb) => cb(message.title));
+          break;
+          
+        case 'claude_session':
+          this.claudeSessionCallbacks.forEach((cb) => cb(message.session_id));
           break;
       }
     } catch {

@@ -321,3 +321,21 @@ class TerminalManager:
             if await self.destroy(terminal_id):
                 count += 1
         return count
+
+    def list_sessions(self) -> list[dict]:
+        """
+        List all active terminal sessions with metadata.
+
+        Returns:
+            List of session info dicts with id, cwd, and alive status
+        """
+        sessions = []
+        for terminal_id, terminal in self._terminals.items():
+            sessions.append(
+                {
+                    "id": terminal_id,
+                    "cwd": terminal.cwd,
+                    "alive": terminal.process.isalive(),
+                }
+            )
+        return sessions

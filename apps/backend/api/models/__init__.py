@@ -20,6 +20,11 @@ from .api_models import (
     TaskStatusUpdateRequest,
     TaskStopResponse,
     TaskUpdate,
+    TerminalAliveResponse,
+    TerminalCreateRequest,
+    TerminalCreateResponse,
+    TerminalSession,
+    TerminalSessionsResponse,
     ThemeType,
     VersionResponse,
 )
@@ -45,6 +50,11 @@ __all__ = [
     "TaskStatusUpdateRequest",
     "TaskStopResponse",
     "TaskUpdate",
+    "TerminalAliveResponse",
+    "TerminalCreateRequest",
+    "TerminalCreateResponse",
+    "TerminalSession",
+    "TerminalSessionsResponse",
     "ThemeType",
     "VersionResponse",
 ]
