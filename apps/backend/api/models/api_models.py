@@ -64,6 +64,89 @@ class Task(BaseModel):
 
 
 # =============================================================================
+# TASK EXECUTION MODELS
+# =============================================================================
+
+
+class TaskStatus(str, Enum):
+    """Valid task status values."""
+
+    pending = "pending"
+    in_progress = "in_progress"
+    reviewing = "reviewing"
+    done = "done"
+    failed = "failed"
+    stuck = "stuck"
+
+
+class TaskStartRequest(BaseModel):
+    """Request model for starting a task."""
+
+    parallel: bool | None = Field(default=None, description="Run in parallel mode")
+    workers: int | None = Field(default=None, description="Number of workers")
+
+
+class TaskStartResponse(BaseModel):
+    """Response model for starting a task."""
+
+    success: bool
+    taskId: str
+    status: str
+
+
+class TaskStopResponse(BaseModel):
+    """Response model for stopping a task."""
+
+    success: bool
+    taskId: str
+
+
+class TaskReviewRequest(BaseModel):
+    """Request model for submitting a task review."""
+
+    approved: bool = Field(..., description="Whether the review is approved")
+    feedback: str | None = Field(default=None, description="Feedback if rejected")
+
+
+class TaskReviewResponse(BaseModel):
+    """Response model for task review."""
+
+    success: bool
+    status: str
+    feedback: str | None = None
+
+
+class TaskStatusUpdateRequest(BaseModel):
+    """Request model for updating task status."""
+
+    status: str = Field(..., description="New status value")
+
+
+class TaskRunningResponse(BaseModel):
+    """Response model for checking if task is running."""
+
+    running: bool
+
+
+class TaskRecoverRequest(BaseModel):
+    """Request model for recovering a stuck task."""
+
+    targetStatus: str | None = Field(
+        default=None, description="Target status after recovery"
+    )
+    autoRestart: bool = Field(default=True, description="Auto-restart after recovery")
+
+
+class TaskRecoverResponse(BaseModel):
+    """Response model for task recovery."""
+
+    success: bool
+    newStatus: str
+    message: str
+    autoRestarted: bool = False
+
+
+# =============================================================================
 # SETTINGS MODELS
 # =============================================================================
 

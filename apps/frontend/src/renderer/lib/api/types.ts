@@ -136,8 +136,12 @@ export interface APIClient {
   deleteTask(taskId: string): Promise<APIResult<void>>;
   
   // Task execution
-  startTask(taskId: string): void;
+  startTask(taskId: string, options?: { parallel?: boolean; workers?: number }): void;
   stopTask(taskId: string): void;
+  submitReview(taskId: string, approved: boolean, feedback?: string): Promise<APIResult<{ success: boolean; status: string; feedback?: string }>>;
+  updateTaskStatus(taskId: string, status: TaskStatus): Promise<APIResult<Task>>;
+  checkTaskRunning(taskId: string): Promise<APIResult<boolean>>;
+  recoverStuckTask(taskId: string, options?: { targetStatus?: TaskStatus; autoRestart?: boolean }): Promise<APIResult<{ success: boolean; newStatus: string; message: string; autoRestarted?: boolean }>>;
   
   // Settings
   getSettings(): Promise<APIResult<AppSettings>>;

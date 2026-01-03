@@ -82,12 +82,39 @@ export class WebAPIClient implements APIClient {
   }
 
   // Task execution (via WebSocket or POST)
-  startTask(taskId: string): void {
-    this.post(`/tasks/${taskId}/start`, {}).catch(console.error);
+  startTask(taskId: string, options?: { parallel?: boolean; workers?: number }): void {
+    this.post(`/tasks/${taskId}/start`, options || {}).catch(console.error);
   }
 
   stopTask(taskId: string): void {
     this.post(`/tasks/${taskId}/stop`, {}).catch(console.error);
+  }
+
+  async submitReview(
+    taskId: string, 
+    approved: boolean, 
+    feedback?: string
+  ): Promise<APIResult<{ success: boolean; status: string; feedback?: string }>> {
+    return this.post(`/tasks/${taskId}/review`, { approved, feedback });
+  }
+
+  async updateTaskStatus(taskId: string, status: TaskStatus): Promise<APIResult<Task>> {
+    return this.put(`/tasks/${taskId}/status`, { status });
+  }
+
+  async checkTaskRunning(taskId: string): Promise<APIResult<boolean>> {
+    const result = await this.get<{ running: boolean }>(`/tasks/${taskId}/running`);
+    if (result.success && result.data) {
+      return { success: true, data: result.data.running };
+    }
+    return { success: false, error: result.error };
+  }
+
+  async recoverStuckTask(
+    taskId: string, 
+    options?: { targetStatus?: TaskStatus; autoRestart?: boolean }
+  ): Promise<APIResult<{ success: boolean; newStatus: string; message: string; autoRestarted?: boolean }>> {
+    return this.post(`/tasks/${taskId}/recover`, options || {});
   }
 
   // ==========================================================================

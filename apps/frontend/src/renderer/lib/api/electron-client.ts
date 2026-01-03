@@ -83,12 +83,70 @@ export class ElectronAPIClient implements APIClient {
     return { success: result.success, error: result.error };
   }
 
-  startTask(taskId: string): void {
-    this.api.startTask(taskId);
+  startTask(taskId: string, options?: { parallel?: boolean; workers?: number }): void {
+    this.api.startTask(taskId, options);
   }
 
   stopTask(taskId: string): void {
     this.api.stopTask(taskId);
+  }
+
+  async submitReview(
+    taskId: string, 
+    approved: boolean, 
+    feedback?: string
+  ): Promise<APIResult<{ success: boolean; status: string; feedback?: string }>> {
+    const result = await this.api.submitReview(taskId, approved, feedback);
+    if (result.success) {
+      return { 
+        success: true, 
+        data: { 
+          success: true, 
+          status: approved ? 'done' : 'in_progress',
+          feedback 
+        } 
+      };
+    }
+    return { success: false, error: result.error };
+  }
+
+  async updateTaskStatus(taskId: string, status: TaskStatus): Promise<APIResult<Task>> {
+    type SharedTaskStatus = import('../../../shared/types').TaskStatus;
+    const result = await this.api.updateTaskStatus(taskId, status as unknown as SharedTaskStatus);
+    return this.mapResult<Task>(result);
+  }
+
+  async checkTaskRunning(taskId: string): Promise<APIResult<boolean>> {
+    const result = await this.api.checkTaskRunning(taskId);
+    if (result.success) {
+      return { success: true, data: result.data === true };
+    }
+    return { success: false, error: result.error };
+  }
+
+  async recoverStuckTask(
+    taskId: string, 
+    options?: { targetStatus?: TaskStatus; autoRestart?: boolean }
+  ): Promise<APIResult<{ success: boolean; newStatus: string; message: string; autoRestarted?: boolean }>> {
+    type SharedTaskStatus = import('../../../shared/types').TaskStatus;
+    // Convert API TaskStatus to shared TaskStatus for the IPC call
+    const ipcOptions = options ? {
+      targetStatus: options.targetStatus as unknown as SharedTaskStatus | undefined,
+      autoRestart: options.autoRestart
+    } : undefined;
+    const result = await this.api.recoverStuckTask(taskId, ipcOptions);
+    if (result.success && result.data) {
+      return { 
+        success: true, 
+        data: {
+          success: true,
+          newStatus: result.data.newStatus,
+          message: result.data.message,
+          autoRestarted: result.data.autoRestarted
+        }
+      };
+    }
+    return { success: false, error: result.error };
   }
 
   async getSettings(): Promise<APIResult<AppSettings>> {

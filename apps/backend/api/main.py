@@ -8,8 +8,20 @@ Provides REST and WebSocket endpoints for the React frontend.
 
 import os
 
-from api.routes import health_router, projects_router, settings_router, tasks_router
-from api.services import ProjectService, SettingsService, TaskService
+from api.routes import (
+    health_router,
+    projects_router,
+    settings_router,
+    task_execution_router,
+    tasks_router,
+)
+from api.services import (
+    ProjectService,
+    SettingsService,
+    TaskExecutionService,
+    TaskService,
+)
+from api.websocket.task_events import reset_task_clients, task_events_websocket
 from api.websocket.terminal import reset_terminal_manager, terminal_websocket
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -46,10 +58,12 @@ app.add_middleware(
 app.include_router(health_router)
 app.include_router(projects_router)
 app.include_router(settings_router)
+app.include_router(task_execution_router)
 app.include_router(tasks_router)
 
 # WebSocket routes
 app.websocket("/ws/terminal/{terminal_id}")(terminal_websocket)
+app.websocket("/ws/tasks/{task_id}/events")(task_events_websocket)
 
 
 @app.on_event("startup")
@@ -59,7 +73,9 @@ async def startup_event():
     ProjectService.reset()
     SettingsService.reset()
     TaskService.reset()
+    TaskExecutionService.reset()
     reset_terminal_manager()
+    reset_task_clients()
 
 
 @app.on_event("shutdown")
