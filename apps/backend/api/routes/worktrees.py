@@ -7,7 +7,6 @@ Supports listing, status, diff, merge, and discard operations.
 """
 
 from api.models import (
-    MergeConflict,
     MergePreview,
     MergeStats,
     WorktreeDiffFile,

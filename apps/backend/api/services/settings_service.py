@@ -9,7 +9,6 @@ Uses in-memory storage with file persistence.
 import json
 import os
 from pathlib import Path
-from typing import Any
 
 from api.models import AppSettings, AppSettingsUpdate, ThemeType
 

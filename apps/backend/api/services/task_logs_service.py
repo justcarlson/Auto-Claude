@@ -169,7 +169,7 @@ class TaskLogsService:
         specs_dir = project_dir / ".auto-claude" / "specs"
 
         if not specs_dir.exists():
-            raise TaskLogsNotFoundError(f"Specs directory not found")
+            raise TaskLogsNotFoundError("Specs directory not found")
 
         # Find spec directory matching task_id
         for spec_dir in specs_dir.iterdir():

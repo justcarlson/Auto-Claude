@@ -6,15 +6,12 @@ Business logic for project management.
 Uses in-memory storage for simplicity (can be replaced with file/DB).
 """
 
-import json
 import os
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import Any
 
 from api.models import (
-    McpServersConfig,
     Project,
     ProjectEnvConfig,
     ProjectEnvConfigUpdate,

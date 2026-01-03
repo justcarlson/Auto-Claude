@@ -1,0 +1,10 @@
+{"type":"begin","data":{"path":{"text":"AGENTS.md"}}}
+{"type":"match","data":{"path":{"text":"AGENTS.md"},"lines":{"text":"| `anthropic.Anthropic()` | Use `create_client()` from `core.client` - enforces security hooks |\n"},"line_number":43,"absolute_offset":1978,"submatches":[{"match":{"text":"anthropic.Anthropic"},"start":3,"end":22}]}}
+{"type":"end","data":{"path":{"text":"AGENTS.md"},"binary_offset":null,"stats":{"elapsed":{"secs":0,"nanos":18774,"human":"0.000019s"},"searches":1,"searches_with_match":1,"bytes_searched":4116,"bytes_printed":341,"matched_lines":1,"matches":1}}}
+{"type":"begin","data":{"path":{"text":"CLAUDE.md"}}}
+{"type":"match","data":{"path":{"text":"CLAUDE.md"},"lines":{"text":"- NEVER use `anthropic.Anthropic()` directly - always use `create_client()` from `core.client`\n"},"line_number":32,"absolute_offset":1384,"submatches":[{"match":{"text":"anthropic.Anthropic"},"start":13,"end":32}]}}
+{"type":"end","data":{"path":{"text":"CLAUDE.md"},"binary_offset":null,"stats":{"elapsed":{"secs":0,"nanos":12209,"human":"0.000012s"},"searches":1,"searches_with_match":1,"bytes_searched":17884,"bytes_printed":340,"matched_lines":1,"matches":1}}}
+{"type":"begin","data":{"path":{"text":"apps/backend/AGENTS.md"}}}
+{"type":"match","data":{"path":{"text":"apps/backend/AGENTS.md"},"lines":{"text":"- **Never** use `anthropic.Anthropic()` directly\n"},"line_number":59,"absolute_offset":2120,"submatches":[{"match":{"text":"anthropic.Anthropic"},"start":17,"end":36}]}}
+{"type":"end","data":{"path":{"text":"apps/backend/AGENTS.md"},"binary_offset":null,"stats":{"elapsed":{"secs":0,"nanos":14611,"human":"0.000015s"},"searches":1,"searches_with_match":1,"bytes_searched":2660,"bytes_printed":320,"matched_lines":1,"matches":1}}}
+{"data":{"elapsed_total":{"human":"0.008065s","nanos":8064563,"secs":0},"stats":{"bytes_printed":1001,"bytes_searched":10817041,"elapsed":{"human":"0.007130s","nanos":7130403,"secs":0},"matched_lines":3,"matches":3,"searches":1370,"searches_with_match":3}},"type":"summary"}
