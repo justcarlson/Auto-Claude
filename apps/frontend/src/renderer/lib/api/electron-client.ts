@@ -2,11 +2,23 @@ import type {
   APIClient, 
   APIResult, 
   Project, 
+  ProjectEnvConfig,
   Task, 
   TaskCreateInput, 
   TaskUpdateInput, 
   TaskStatus,
-  AppSettings 
+  AppSettings,
+  WorktreeStatus,
+  WorktreeDiff,
+  WorktreeMergeResult,
+  WorktreeListResult,
+  GitBranchesResult,
+  GitMainBranchResult,
+  GitStatusResult,
+  GitInitResult,
+  DirectoryListResult,
+  FileContentResult,
+  TaskLogs,
 } from './types';
 
 export class ElectronAPIClient implements APIClient {
@@ -82,12 +94,70 @@ export class ElectronAPIClient implements APIClient {
     return { success: result.success, error: result.error };
   }
 
-  startTask(taskId: string): void {
-    this.api.startTask(taskId);
+  startTask(taskId: string, options?: { parallel?: boolean; workers?: number }): void {
+    this.api.startTask(taskId, options);
   }
 
   stopTask(taskId: string): void {
     this.api.stopTask(taskId);
+  }
+
+  async submitReview(
+    taskId: string, 
+    approved: boolean, 
+    feedback?: string
+  ): Promise<APIResult<{ success: boolean; status: string; feedback?: string }>> {
+    const result = await this.api.submitReview(taskId, approved, feedback);
+    if (result.success) {
+      return { 
+        success: true, 
+        data: { 
+          success: true, 
+          status: approved ? 'done' : 'in_progress',
+          feedback 
+        } 
+      };
+    }
+    return { success: false, error: result.error };
+  }
+
+  async updateTaskStatus(taskId: string, status: TaskStatus): Promise<APIResult<Task>> {
+    type SharedTaskStatus = import('../../../shared/types').TaskStatus;
+    const result = await this.api.updateTaskStatus(taskId, status as unknown as SharedTaskStatus);
+    return this.mapResult<Task>(result);
+  }
+
+  async checkTaskRunning(taskId: string): Promise<APIResult<boolean>> {
+    const result = await this.api.checkTaskRunning(taskId);
+    if (result.success) {
+      return { success: true, data: result.data === true };
+    }
+    return { success: false, error: result.error };
+  }
+
+  async recoverStuckTask(
+    taskId: string, 
+    options?: { targetStatus?: TaskStatus; autoRestart?: boolean }
+  ): Promise<APIResult<{ success: boolean; newStatus: string; message: string; autoRestarted?: boolean }>> {
+    type SharedTaskStatus = import('../../../shared/types').TaskStatus;
+    // Convert API TaskStatus to shared TaskStatus for the IPC call
+    const ipcOptions = options ? {
+      targetStatus: options.targetStatus as unknown as SharedTaskStatus | undefined,
+      autoRestart: options.autoRestart
+    } : undefined;
+    const result = await this.api.recoverStuckTask(taskId, ipcOptions);
+    if (result.success && result.data) {
+      return { 
+        success: true, 
+        data: {
+          success: true,
+          newStatus: result.data.newStatus,
+          message: result.data.message,
+          autoRestarted: result.data.autoRestarted
+        }
+      };
+    }
+    return { success: false, error: result.error };
   }
 
   async getSettings(): Promise<APIResult<AppSettings>> {
@@ -100,6 +170,16 @@ export class ElectronAPIClient implements APIClient {
     return { success: result.success, error: result.error };
   }
 
+  async getProjectEnv(projectId: string): Promise<APIResult<ProjectEnvConfig>> {
+    const result = await this.api.getProjectEnv(projectId);
+    return this.mapResult<ProjectEnvConfig>(result);
+  }
+
+  async updateProjectEnv(projectId: string, config: Partial<ProjectEnvConfig>): Promise<APIResult<ProjectEnvConfig>> {
+    const result = await this.api.updateProjectEnv(projectId, config as Record<string, unknown>);
+    return this.mapResult<ProjectEnvConfig>(result);
+  }
+
   onTaskProgress(callback: (taskId: string, progress: unknown) => void): () => void {
     return this.api.onTaskProgress(callback);
   }
@@ -110,6 +190,64 @@ export class ElectronAPIClient implements APIClient {
 
   onTaskStatusChange(callback: (taskId: string, status: TaskStatus) => void): () => void {
     return this.api.onTaskStatusChange(callback as (taskId: string, status: unknown) => void);
+  }
+
+  async listWorktrees(projectId: string): Promise<APIResult<WorktreeListResult>> {
+    const result = await this.api.listWorktrees(projectId);
+    return this.mapResult<WorktreeListResult>(result);
+  }
+
+  async getWorktreeStatus(taskId: string): Promise<APIResult<WorktreeStatus>> {
+    const result = await this.api.getWorktreeStatus(taskId);
+    return this.mapResult<WorktreeStatus>(result);
+  }
+
+  async getWorktreeDiff(taskId: string): Promise<APIResult<WorktreeDiff>> {
+    const result = await this.api.getWorktreeDiff(taskId);
+    return this.mapResult<WorktreeDiff>(result);
+  }
+
+  async mergeWorktreePreview(taskId: string): Promise<APIResult<WorktreeMergeResult>> {
+    const result = await this.api.mergeWorktreePreview(taskId);
+    return this.mapResult<WorktreeMergeResult>(result);
+  }
+
+  async mergeWorktree(taskId: string, options?: { noCommit?: boolean }): Promise<APIResult<WorktreeMergeResult>> {
+    const result = await this.api.mergeWorktree(taskId, options);
+    return this.mapResult<WorktreeMergeResult>(result);
+  }
+
+  async discardWorktree(taskId: string): Promise<APIResult<{ success: boolean; message: string }>> {
+    const result = await this.api.discardWorktree(taskId);
+    return this.mapResult<{ success: boolean; message: string }>(result);
+  }
+
+  async getGitBranches(_projectId: string): Promise<APIResult<GitBranchesResult>> {
+    return { success: false, error: 'Git branches not available in Electron mode yet' };
+  }
+
+  async getGitMainBranch(_projectId: string): Promise<APIResult<GitMainBranchResult>> {
+    return { success: false, error: 'Git main branch detection not available in Electron mode yet' };
+  }
+
+  async getGitStatus(_projectId: string): Promise<APIResult<GitStatusResult>> {
+    return { success: false, error: 'Git status not available in Electron mode yet' };
+  }
+
+  async initGitRepo(_projectId: string): Promise<APIResult<GitInitResult>> {
+    return { success: false, error: 'Git init not available in Electron mode yet' };
+  }
+
+  async listDirectory(_projectId: string, _path?: string): Promise<APIResult<DirectoryListResult>> {
+    return { success: false, error: 'Directory listing not available in Electron mode yet' };
+  }
+
+  async readFile(_projectId: string, _path: string): Promise<APIResult<FileContentResult>> {
+    return { success: false, error: 'File reading not available in Electron mode yet' };
+  }
+
+  async getTaskLogs(_taskId: string): Promise<APIResult<TaskLogs>> {
+    return { success: false, error: 'Task logs via API not available in Electron mode. Use window.electronAPI.getTaskLogs instead.' };
   }
 
   private mapResult<T>(result: { success: boolean; data?: unknown; error?: string }): APIResult<T> {

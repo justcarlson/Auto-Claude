@@ -232,11 +232,7 @@ export async function createTask(
 
 export function startTask(taskId: string, options?: { parallel?: boolean; workers?: number }): void {
   const api = getAPIClient();
-  if (isWebMode()) {
-    api.startTask(taskId);
-  } else {
-    window.electronAPI.startTask(taskId, options);
-  }
+  api.startTask(taskId, options);
 }
 
 export function stopTask(taskId: string): void {
@@ -249,15 +245,11 @@ export async function submitReview(
   approved: boolean,
   feedback?: string
 ): Promise<boolean> {
-  if (isWebMode()) {
-    console.warn('[TaskStore] submitReview not available in web mode');
-    return false;
-  }
-
   const store = useTaskStore.getState();
+  const api = getAPIClient();
 
   try {
-    const result = await window.electronAPI.submitReview(taskId, approved, feedback);
+    const result = await api.submitReview(taskId, approved, feedback);
     if (result.success) {
       store.updateTaskStatus(taskId, approved ? 'done' : 'in_progress');
       return true;
@@ -272,17 +264,13 @@ export async function persistTaskStatus(
   taskId: string,
   status: TaskStatus
 ): Promise<boolean> {
-  if (isWebMode()) {
-    console.warn('[TaskStore] persistTaskStatus not fully supported in web mode');
-    return false;
-  }
-
   const store = useTaskStore.getState();
+  const api = getAPIClient();
 
   try {
     store.updateTaskStatus(taskId, status);
 
-    const result = await window.electronAPI.updateTaskStatus(taskId, status);
+    const result = await api.updateTaskStatus(taskId, status as import('../lib/api/types').TaskStatus);
     if (!result.success) {
       console.error('Failed to persist task status:', result.error);
       return false;
@@ -327,12 +315,10 @@ export async function persistUpdateTask(
 }
 
 export async function checkTaskRunning(taskId: string): Promise<boolean> {
-  if (isWebMode()) {
-    return false;
-  }
+  const api = getAPIClient();
 
   try {
-    const result = await window.electronAPI.checkTaskRunning(taskId);
+    const result = await api.checkTaskRunning(taskId);
     return result.success && result.data === true;
   } catch (error) {
     console.error('Error checking task running status:', error);
@@ -344,18 +330,18 @@ export async function recoverStuckTask(
   taskId: string,
   options: { targetStatus?: TaskStatus; autoRestart?: boolean } = { autoRestart: true }
 ): Promise<{ success: boolean; message: string; autoRestarted?: boolean }> {
-  if (isWebMode()) {
-    return { success: false, message: 'Not available in web mode' };
-  }
-
   const store = useTaskStore.getState();
+  const api = getAPIClient();
 
   try {
-    const result = await window.electronAPI.recoverStuckTask(taskId, options);
+    const apiOptions = {
+      targetStatus: options.targetStatus as import('../lib/api/types').TaskStatus | undefined,
+      autoRestart: options.autoRestart
+    };
+    const result = await api.recoverStuckTask(taskId, apiOptions);
 
     if (result.success && result.data) {
-      // Update local state
-      store.updateTaskStatus(taskId, result.data.newStatus);
+      store.updateTaskStatus(taskId, result.data.newStatus as TaskStatus);
       return {
         success: true,
         message: result.data.message,

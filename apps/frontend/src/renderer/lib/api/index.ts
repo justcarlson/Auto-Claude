@@ -12,7 +12,7 @@ import { createAPIClient } from './client';
 import type { APIClient } from './types';
 
 // Re-export types and client factory
-export { createAPIClient, isWebMode } from './client';
+export { createAPIClient, isWebMode, openExternalLink } from './client';
 export { TerminalWebSocket } from './terminal-client';
 export type { APIClient, TerminalClient } from './types';
 

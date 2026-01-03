@@ -5,7 +5,7 @@ Projects API Endpoints
 CRUD operations for project management.
 """
 
-from api.models import Project, ProjectCreate
+from api.models import Project, ProjectCreate, ProjectEnvConfig, ProjectEnvConfigUpdate
 from api.services import ProjectService
 from fastapi import APIRouter, HTTPException, Response, status
 
@@ -100,3 +100,60 @@ async def delete_project(project_id: str) -> Response:
         )
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get("/{project_id}/env", response_model=ProjectEnvConfig)
+async def get_project_env(project_id: str) -> ProjectEnvConfig:
+    """
+    Get project environment configuration.
+
+    Args:
+        project_id: Project ID
+
+    Returns:
+        Project environment configuration
+
+    Raises:
+        404: If project not found
+    """
+    service = get_service()
+    env_config = service.get_project_env(project_id)
+
+    if env_config is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Project not found: {project_id}",
+        )
+
+    return env_config
+
+
+@router.put("/{project_id}/env", response_model=ProjectEnvConfig)
+async def update_project_env(
+    project_id: str, updates: ProjectEnvConfigUpdate
+) -> ProjectEnvConfig:
+    """
+    Update project environment configuration.
+
+    Performs a partial update - only provided fields are changed.
+
+    Args:
+        project_id: Project ID
+        updates: Partial env config to merge
+
+    Returns:
+        Updated project environment configuration
+
+    Raises:
+        404: If project not found
+    """
+    service = get_service()
+    env_config = service.update_project_env(project_id, updates)
+
+    if env_config is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Project not found: {project_id}",
+        )
+
+    return env_config

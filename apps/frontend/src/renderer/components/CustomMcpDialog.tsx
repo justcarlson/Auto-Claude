@@ -18,6 +18,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
+import { openExternalLink } from '../lib/api';
 import { useTranslation } from 'react-i18next';
 import type { CustomMcpServer } from '../../shared/types';
 import { Terminal, Globe, X, Github, Loader2, ExternalLink } from 'lucide-react';
@@ -366,7 +367,7 @@ export function CustomMcpDialog({
                       className="inline-flex items-center gap-1 text-sm text-primary hover:underline mt-1"
                       onClick={(e) => {
                         e.preventDefault();
-                        window.electronAPI?.openExternal(urlHint.link);
+                        openExternalLink(urlHint.link);
                       }}
                     >
                       {urlHint.linkText}

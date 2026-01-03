@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useTerminalStore } from '../../stores/terminal-store';
 import { terminalBufferManager } from '../../lib/terminal-buffer-manager';
+import { isWebMode, TerminalWebSocket } from '../../lib/api';
 
 interface UseTerminalEventsOptions {
   terminalId: string;
@@ -17,14 +18,12 @@ export function useTerminalEvents({
   onTitleChange,
   onClaudeSession,
 }: UseTerminalEventsOptions) {
-  // Use refs to always have the latest callbacks without re-registering listeners
-  // This prevents duplicate listener registration when callbacks change identity
   const onOutputRef = useRef(onOutput);
   const onExitRef = useRef(onExit);
   const onTitleChangeRef = useRef(onTitleChange);
   const onClaudeSessionRef = useRef(onClaudeSession);
+  const wsClientRef = useRef<TerminalWebSocket | null>(null);
 
-  // Keep refs updated with latest callbacks
   useEffect(() => {
     onOutputRef.current = onOutput;
   }, [onOutput]);
@@ -41,53 +40,93 @@ export function useTerminalEvents({
     onClaudeSessionRef.current = onClaudeSession;
   }, [onClaudeSession]);
 
-  // Handle terminal output from main process
-  // Only depends on terminalId (stable) to prevent listener re-registration
   useEffect(() => {
-    const cleanup = window.electronAPI.onTerminalOutput((id, data) => {
-      if (id === terminalId) {
+    if (isWebMode()) {
+      const client = new TerminalWebSocket(terminalId);
+      wsClientRef.current = client;
+
+      const cleanupOutput = client.onOutput((data) => {
         terminalBufferManager.append(terminalId, data);
         onOutputRef.current?.(data);
-      }
-    });
+      });
 
-    return cleanup;
-  }, [terminalId]);
-
-  // Handle terminal exit
-  useEffect(() => {
-    const cleanup = window.electronAPI.onTerminalExit((id, exitCode) => {
-      if (id === terminalId) {
-        useTerminalStore.getState().setTerminalStatus(terminalId, 'exited');
-        onExitRef.current?.(exitCode);
-      }
-    });
-
-    return cleanup;
-  }, [terminalId]);
-
-  // Handle terminal title change
-  useEffect(() => {
-    const cleanup = window.electronAPI.onTerminalTitleChange((id, title) => {
-      if (id === terminalId) {
+      const cleanupTitle = client.onTitle((title) => {
         useTerminalStore.getState().updateTerminal(terminalId, { title });
         onTitleChangeRef.current?.(title);
-      }
-    });
+      });
 
-    return cleanup;
-  }, [terminalId]);
-
-  // Handle Claude session ID capture
-  useEffect(() => {
-    const cleanup = window.electronAPI.onTerminalClaudeSession((id, sessionId) => {
-      if (id === terminalId) {
+      const cleanupClaudeSession = client.onClaudeSession((sessionId) => {
         useTerminalStore.getState().setClaudeSessionId(terminalId, sessionId);
-        console.warn('[Terminal] Captured Claude session ID:', sessionId);
         onClaudeSessionRef.current?.(sessionId);
-      }
-    });
+      });
 
-    return cleanup;
+      const cleanupDisconnect = client.onDisconnected(() => {
+        useTerminalStore.getState().setTerminalStatus(terminalId, 'exited');
+        onExitRef.current?.(0);
+      });
+
+      client.connect();
+
+      return () => {
+        cleanupOutput();
+        cleanupTitle();
+        cleanupClaudeSession();
+        cleanupDisconnect();
+        client.disconnect();
+        wsClientRef.current = null;
+      };
+    } else {
+      const cleanupOutput = window.electronAPI.onTerminalOutput((id, data) => {
+        if (id === terminalId) {
+          terminalBufferManager.append(terminalId, data);
+          onOutputRef.current?.(data);
+        }
+      });
+
+      const cleanupExit = window.electronAPI.onTerminalExit((id, exitCode) => {
+        if (id === terminalId) {
+          useTerminalStore.getState().setTerminalStatus(terminalId, 'exited');
+          onExitRef.current?.(exitCode);
+        }
+      });
+
+      const cleanupTitle = window.electronAPI.onTerminalTitleChange((id, title) => {
+        if (id === terminalId) {
+          useTerminalStore.getState().updateTerminal(terminalId, { title });
+          onTitleChangeRef.current?.(title);
+        }
+      });
+
+      const cleanupClaudeSession = window.electronAPI.onTerminalClaudeSession((id, sessionId) => {
+        if (id === terminalId) {
+          useTerminalStore.getState().setClaudeSessionId(terminalId, sessionId);
+          onClaudeSessionRef.current?.(sessionId);
+        }
+      });
+
+      return () => {
+        cleanupOutput();
+        cleanupExit();
+        cleanupTitle();
+        cleanupClaudeSession();
+      };
+    }
   }, [terminalId]);
+
+  return {
+    sendInput: (data: string) => {
+      if (isWebMode() && wsClientRef.current) {
+        wsClientRef.current.sendInput(data);
+      } else {
+        window.electronAPI.sendTerminalInput(terminalId, data);
+      }
+    },
+    resize: (cols: number, rows: number) => {
+      if (isWebMode() && wsClientRef.current) {
+        wsClientRef.current.resize(cols, rows);
+      } else {
+        window.electronAPI.resizeTerminal(terminalId, cols, rows);
+      }
+    },
+  };
 }

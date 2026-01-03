@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useTaskStore } from '../stores/task-store';
 import { useRoadmapStore } from '../stores/roadmap-store';
 import { useRateLimitStore } from '../stores/rate-limit-store';
+import { getAPIClient, isWebMode } from '../lib/api';
 import type { ImplementationPlan, TaskStatus, RoadmapGenerationStatus, Roadmap, ExecutionProgress, RateLimitInfo, SDKRateLimitInfo } from '../../shared/types';
 
 /**
@@ -188,6 +189,14 @@ export function useIpcListeners(): void {
  */
 export function useAppSettings() {
   const getSettings = async () => {
+    if (isWebMode()) {
+      const api = getAPIClient();
+      const result = await api.getSettings();
+      if (result.success && result.data) {
+        return result.data;
+      }
+      return null;
+    }
     const result = await window.electronAPI.getSettings();
     if (result.success && result.data) {
       return result.data;
@@ -196,6 +205,11 @@ export function useAppSettings() {
   };
 
   const saveSettings = async (settings: Parameters<typeof window.electronAPI.saveSettings>[0]) => {
+    if (isWebMode()) {
+      const api = getAPIClient();
+      const result = await api.saveSettings(settings);
+      return result.success;
+    }
     const result = await window.electronAPI.saveSettings(settings);
     return result.success;
   };
@@ -207,7 +221,19 @@ export function useAppSettings() {
  * Hook to get the app version
  */
 export function useAppVersion() {
-  const getVersion = async () => {
+  const getVersion = async (): Promise<string> => {
+    if (isWebMode()) {
+      try {
+        const response = await fetch('/api/version');
+        if (response.ok) {
+          const data = await response.json();
+          return data.version || '0.0.0';
+        }
+      } catch {
+        return '0.0.0';
+      }
+      return '0.0.0';
+    }
     return window.electronAPI.getAppVersion();
   };
 

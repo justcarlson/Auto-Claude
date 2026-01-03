@@ -15,6 +15,7 @@ import { Button } from '../ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { cn } from '../../lib/utils';
 import { useSettingsStore } from '../../stores/settings-store';
+import { isWebMode } from '../../lib/api';
 import type { Task } from '../../../shared/types';
 import type { FileNode } from '../../../shared/types/project';
 
@@ -346,7 +347,7 @@ export function TaskFiles({ task }: TaskFilesProps) {
           <div className="px-4 py-2 border-b border-border flex items-center gap-2 shrink-0 bg-muted/30">
             {getFileIcon(selectedFileName)}
             <span className="text-sm font-medium flex-1">{selectedFileName}</span>
-            {settings.preferredIDE && (
+            {!isWebMode() && settings.preferredIDE && (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button

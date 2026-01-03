@@ -11,7 +11,11 @@ import uuid
 from datetime import datetime
 from pathlib import Path
 
-from api.models import Project
+from api.models import (
+    Project,
+    ProjectEnvConfig,
+    ProjectEnvConfigUpdate,
+)
 
 
 class ProjectService:
@@ -26,6 +30,7 @@ class ProjectService:
 
     def __init__(self):
         self._projects: dict[str, Project] = {}
+        self._env_configs: dict[str, ProjectEnvConfig] = {}
 
     @classmethod
     def get_instance(cls) -> "ProjectService":
@@ -95,5 +100,62 @@ class ProjectService:
         """
         if project_id in self._projects:
             del self._projects[project_id]
+            self._env_configs.pop(project_id, None)
             return True
         return False
+
+    def get_project_env(self, project_id: str) -> ProjectEnvConfig | None:
+        """
+        Get project environment configuration.
+
+        Args:
+            project_id: Project ID
+
+        Returns:
+            Environment config or None if project not found
+        """
+        if project_id not in self._projects:
+            return None
+
+        if project_id not in self._env_configs:
+            self._env_configs[project_id] = ProjectEnvConfig()
+
+        return self._env_configs[project_id]
+
+    def update_project_env(
+        self, project_id: str, updates: ProjectEnvConfigUpdate
+    ) -> ProjectEnvConfig | None:
+        """
+        Update project environment configuration.
+
+        Args:
+            project_id: Project ID
+            updates: Partial env config to merge
+
+        Returns:
+            Updated env config or None if project not found
+        """
+        if project_id not in self._projects:
+            return None
+
+        if project_id not in self._env_configs:
+            self._env_configs[project_id] = ProjectEnvConfig()
+
+        current = self._env_configs[project_id].model_dump()
+        update_data = updates.model_dump(exclude_unset=True)
+
+        for key, value in update_data.items():
+            if value is not None:
+                if key == "mcpServers" and isinstance(value, dict):
+                    existing_mcp = current.get("mcpServers") or {}
+                    if hasattr(existing_mcp, "model_dump"):
+                        existing_mcp = existing_mcp.model_dump()
+                    elif not isinstance(existing_mcp, dict):
+                        existing_mcp = {}
+                    merged_mcp = {**existing_mcp, **value}
+                    current["mcpServers"] = merged_mcp
+                else:
+                    current[key] = value
+
+        self._env_configs[project_id] = ProjectEnvConfig(**current)
+        return self._env_configs[project_id]

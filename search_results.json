@@ -1,0 +1,308 @@
+Total Files: 91
+Total Usages: 378
+
+--- Domains ---
+
+Domain: AddFeatureDialog.tsx/ (1 files)
+  - apps/frontend/src/renderer/components/AddFeatureDialog.tsx (1 usages)
+    Methods: saveRoadmap
+
+Domain: AddProjectModal.tsx/ (1 files)
+  - apps/frontend/src/renderer/components/AddProjectModal.tsx (8 usages)
+    Methods: createProjectFolder, detectMainBranch, getDefaultProjectLocation, selectDirectory, updateProjectSettings
+
+Domain: AgentTools.tsx/ (1 files)
+  - apps/frontend/src/renderer/components/AgentTools.tsx (7 usages)
+    Methods: checkMcpHealth, getProjectEnv, updateProjectEnv
+
+Domain: AppUpdateNotification.tsx/ (1 files)
+  - apps/frontend/src/renderer/components/AppUpdateNotification.tsx (5 usages)
+    Methods: downloadAppUpdate, installAppUpdate, onAppUpdateAvailable, onAppUpdateDownloaded, onAppUpdateProgress
+
+Domain: ClaudeCodeStatusBadge.tsx/ (1 files)
+  - apps/frontend/src/renderer/components/ClaudeCodeStatusBadge.tsx (2 usages)
+    Methods: checkClaudeCodeVersion, installClaudeCode
+
+Domain: EnvConfigModal.tsx/ (1 files)
+  - apps/frontend/src/renderer/components/EnvConfigModal.tsx (7 usages)
+    Methods: checkSourceToken, getClaudeProfiles, invokeClaudeSetup, onTerminalOAuthToken, updateSourceEnv
+
+Domain: GitHubSetupModal.tsx/ (1 files)
+  - apps/frontend/src/renderer/components/GitHubSetupModal.tsx (9 usages)
+    Methods: addGitRemote, createGitHubRepo, detectGitHubRepo, getClaudeProfiles, getGitHubBranches, getGitHubToken, getGitHubUser, listGitHubOrgs
+
+Domain: GitSetupModal.tsx/ (1 files)
+  - apps/frontend/src/renderer/components/GitSetupModal.tsx (1 usages)
+    Methods: initializeGit
+
+Domain: ProactiveSwapListener.tsx/ (1 files)
+  - apps/frontend/src/renderer/components/ProactiveSwapListener.tsx (1 usages)
+    Methods: onProactiveSwapNotification
+
+Domain: RateLimitModal.tsx/ (1 files)
+  - apps/frontend/src/renderer/components/RateLimitModal.tsx (4 usages)
+    Methods: getAutoSwitchSettings, initializeClaudeProfile, saveClaudeProfile, updateAutoSwitchSettings
+
+Domain: SDKRateLimitModal.tsx/ (1 files)
+  - apps/frontend/src/renderer/components/SDKRateLimitModal.tsx (6 usages)
+    Methods: getAutoSwitchSettings, initializeClaudeProfile, retryWithProfile, saveClaudeProfile, setActiveClaudeProfile, updateAutoSwitchSettings
+
+Domain: Sidebar.tsx/ (1 files)
+  - apps/frontend/src/renderer/components/Sidebar.tsx (3 usages)
+    Methods: checkGitStatus, getProjectEnv
+
+Domain: TaskCreationWizard.tsx/ (1 files)
+  - apps/frontend/src/renderer/components/TaskCreationWizard.tsx (3 usages)
+    Methods: detectMainBranch, getGitBranches, getProjectEnv
+
+Domain: Terminal.tsx/ (1 files)
+  - apps/frontend/src/renderer/components/Terminal.tsx (3 usages)
+    Methods: invokeClaudeInTerminal, resizeTerminal, sendTerminalInput
+
+Domain: TerminalGrid.tsx/ (1 files)
+  - apps/frontend/src/renderer/components/TerminalGrid.tsx (8 usages)
+    Methods: destroyTerminal, getTerminalSessionDates, getTerminalSessionsForDate, invokeClaudeInTerminal, restoreTerminalSessionsFromDate, sendTerminalInput
+
+Domain: UsageIndicator.tsx/ (1 files)
+  - apps/frontend/src/renderer/components/UsageIndicator.tsx (2 usages)
+    Methods: onUsageUpdated, requestUsageUpdate
+
+Domain: Worktrees.tsx/ (1 files)
+  - apps/frontend/src/renderer/components/Worktrees.tsx (3 usages)
+    Methods: discardWorktree, listWorktrees, mergeWorktree
+
+Domain: api/ (2 files)
+  - apps/frontend/src/renderer/lib/api/client.ts (1 usages)
+    Methods: openExternal
+  - apps/frontend/src/renderer/lib/api/electron-client.ts (1 usages)
+    Methods: getTaskLogs
+
+Domain: buffer-persistence.ts/ (1 files)
+  - apps/frontend/src/renderer/lib/buffer-persistence.ts (2 usages)
+    Methods: saveTerminalBuffer
+
+Domain: changelog/ (5 files)
+  - apps/frontend/src/renderer/components/changelog/hooks/useChangelog.ts (5 usages)
+    Methods: onChangelogGenerationComplete, onChangelogGenerationError, onChangelogGenerationProgress, suggestChangelogVersion, suggestChangelogVersionFromCommits
+  - apps/frontend/src/renderer/components/changelog/ArchiveTasksCard.tsx (1 usages)
+    Methods: archiveTasks
+  - apps/frontend/src/renderer/components/changelog/GitHubReleaseCard.tsx (1 usages)
+    Methods: createGitHubRelease
+  - apps/frontend/src/renderer/components/changelog/PreviewPanel.tsx (1 usages)
+    Methods: readLocalImage
+  - apps/frontend/src/renderer/components/changelog/hooks/useImageUpload.ts (1 usages)
+    Methods: saveChangelogImage
+
+Domain: changelog-store.ts/ (1 files)
+  - apps/frontend/src/renderer/stores/changelog-store.ts (10 usages)
+    Methods: generateChangelog, getChangelogBranches, getChangelogCommitsPreview, getChangelogDoneTasks, getChangelogTags, loadTaskSpecs, readExistingChangelog, saveChangelog
+
+Domain: claude-profile-store.ts/ (1 files)
+  - apps/frontend/src/renderer/stores/claude-profile-store.ts (2 usages)
+    Methods: getClaudeProfiles, switchClaudeProfile
+
+Domain: context-store.ts/ (1 files)
+  - apps/frontend/src/renderer/stores/context-store.ts (4 usages)
+    Methods: getProjectContext, getRecentMemories, refreshProjectIndex, searchMemories
+
+Domain: download-store.ts/ (1 files)
+  - apps/frontend/src/renderer/stores/download-store.ts (1 usages)
+    Methods: onDownloadProgress
+
+Domain: file-explorer-store.ts/ (1 files)
+  - apps/frontend/src/renderer/stores/file-explorer-store.ts (1 usages)
+    Methods: listDirectory
+
+Domain: github/ (4 files)
+  - apps/frontend/src/renderer/stores/github/pr-review-store.ts (5 usages)
+    Methods: github.onPRReviewComplete, github.onPRReviewError, github.onPRReviewProgress, github.runFollowupReview, github.runPRReview
+  - apps/frontend/src/renderer/stores/github/issues-store.ts (2 usages)
+    Methods: getGitHubIssues, importGitHubIssues
+  - apps/frontend/src/renderer/stores/github/investigation-store.ts (1 usages)
+    Methods: investigateGitHubIssue
+  - apps/frontend/src/renderer/stores/github/sync-status-store.ts (1 usages)
+    Methods: checkGitHubConnection
+
+Domain: github-issues/ (5 files)
+  - apps/frontend/src/renderer/components/github-issues/hooks/useAutoFix.ts (14 usages)
+    Methods: github.batchAutoFix, github.checkNewIssues, github.getAutoFixConfig, github.getAutoFixQueue, github.getBatches, github.onAutoFixComplete, github.onBatchComplete, github.onBatchError, github.onBatchProgress, github.saveAutoFixConfig, github.startAutoFix
+  - apps/frontend/src/renderer/components/github-issues/hooks/useAnalyzePreview.ts (5 usages)
+    Methods: github.analyzeIssuesPreview, github.approveBatches, github.onAnalyzePreviewComplete, github.onAnalyzePreviewError, github.onAnalyzePreviewProgress
+  - apps/frontend/src/renderer/components/github-issues/components/AutoFixButton.tsx (4 usages)
+    Methods: github.onAutoFixComplete, github.onAutoFixError, github.onAutoFixProgress, github.startAutoFix
+  - apps/frontend/src/renderer/components/github-issues/hooks/useGitHubInvestigation.ts (3 usages)
+    Methods: onGitHubInvestigationComplete, onGitHubInvestigationError, onGitHubInvestigationProgress
+  - apps/frontend/src/renderer/components/github-issues/components/InvestigationDialog.tsx (1 usages)
+    Methods: getIssueComments
+
+Domain: github-prs/ (2 files)
+  - apps/frontend/src/renderer/components/github-prs/hooks/useGitHubPRs.ts (12 usages)
+    Methods: github.assignPR, github.cancelPRReview, github.checkGitHubConnection, github.checkNewCommits, github.getPRReview, github.listPRs, github.mergePR, github.postPRComment, github.postPRReview
+  - apps/frontend/src/renderer/components/github-prs/GitHubPRs.tsx (1 usages)
+    Methods: github.getPRLogs
+
+Domain: gitlab/ (1 files)
+  - apps/frontend/src/renderer/stores/gitlab/mr-review-store.ts (5 usages)
+    Methods: onGitLabMRReviewComplete, onGitLabMRReviewError, onGitLabMRReviewProgress, runGitLabMRFollowupReview, runGitLabMRReview
+
+Domain: gitlab-issues/ (2 files)
+  - apps/frontend/src/renderer/components/gitlab-issues/hooks/useGitLabInvestigation.ts (3 usages)
+    Methods: onGitLabInvestigationComplete, onGitLabInvestigationError, onGitLabInvestigationProgress
+  - apps/frontend/src/renderer/components/gitlab-issues/components/InvestigationDialog.tsx (1 usages)
+    Methods: getGitLabIssueNotes
+
+Domain: gitlab-merge-requests/ (2 files)
+  - apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts (20 usages)
+    Methods: approveGitLabMR, assignGitLabMR, cancelGitLabMRReview, checkGitLabConnection, checkGitLabMRNewCommits, getGitLabMRReview, getGitLabMergeRequests, mergeGitLabMR, postGitLabMRNote, postGitLabMRReview
+  - apps/frontend/src/renderer/components/gitlab-merge-requests/components/CreateMergeRequestDialog.tsx (1 usages)
+    Methods: createGitLabMergeRequest
+
+Domain: gitlab-store.ts/ (1 files)
+  - apps/frontend/src/renderer/stores/gitlab-store.ts (4 usages)
+    Methods: checkGitLabConnection, getGitLabIssues, importGitLabIssues, investigateGitLabIssue
+
+Domain: ideation/ (1 files)
+  - apps/frontend/src/renderer/components/ideation/hooks/useIdeation.ts (2 usages)
+    Methods: convertIdeaToTask, dismissIdea
+
+Domain: ideation-store.ts/ (1 files)
+  - apps/frontend/src/renderer/stores/ideation-store.ts (17 usages)
+    Methods: archiveIdea, deleteIdea, deleteMultipleIdeas, dismissAllIdeas, generateIdeation, getIdeation, onIdeationComplete, onIdeationError, onIdeationLog, onIdeationProgress, onIdeationStopped, onIdeationTypeComplete, onIdeationTypeFailed, refreshIdeation, stopIdeation
+
+Domain: insights-store.ts/ (1 files)
+  - apps/frontend/src/renderer/stores/insights-store.ts (13 usages)
+    Methods: clearInsightsSession, createTaskFromInsights, deleteInsightsSession, getInsightsSession, listInsightsSessions, newInsightsSession, onInsightsError, onInsightsStatus, onInsightsStreamChunk, renameInsightsSession, sendInsightsMessage, switchInsightsSession, updateInsightsModelConfig
+
+Domain: linear-import/ (4 files)
+  - apps/frontend/src/renderer/components/linear-import/hooks/useLinearImport.ts (1 usages)
+    Methods: importLinearIssues
+  - apps/frontend/src/renderer/components/linear-import/hooks/useLinearIssues.ts (1 usages)
+    Methods: getLinearIssues
+  - apps/frontend/src/renderer/components/linear-import/hooks/useLinearProjects.ts (1 usages)
+    Methods: getLinearProjects
+  - apps/frontend/src/renderer/components/linear-import/hooks/useLinearTeams.ts (1 usages)
+    Methods: getLinearTeams
+
+Domain: onboarding/ (7 files)
+  - apps/frontend/src/renderer/components/onboarding/OAuthStep.tsx (9 usages)
+    Methods: deleteClaudeProfile, getClaudeProfiles, initializeClaudeProfile, onTerminalOAuthToken, renameClaudeProfile, saveClaudeProfile, setActiveClaudeProfile, setClaudeProfileToken
+  - apps/frontend/src/renderer/components/onboarding/OllamaModelSelector.tsx (5 usages)
+    Methods: checkOllamaInstalled, checkOllamaStatus, installOllama, listOllamaEmbeddingModels, pullOllamaModel
+  - apps/frontend/src/renderer/components/onboarding/ClaudeCodeStep.tsx (2 usages)
+    Methods: checkClaudeCodeVersion, installClaudeCode
+  - apps/frontend/src/renderer/components/onboarding/DevToolsStep.tsx (2 usages)
+    Methods: saveSettings, worktreeDetectTools
+  - apps/frontend/src/renderer/components/onboarding/GraphitiStep.tsx (2 usages)
+    Methods: getMemoryInfrastructureStatus, saveSettings
+  - apps/frontend/src/renderer/components/onboarding/MemoryStep.tsx (2 usages)
+    Methods: getMemoryInfrastructureStatus, saveSettings
+  - apps/frontend/src/renderer/components/onboarding/OnboardingWizard.tsx (2 usages)
+    Methods: saveSettings
+
+Domain: project-settings/ (5 files)
+  - apps/frontend/src/renderer/components/project-settings/hooks/useProjectSettings.ts (10 usages)
+    Methods: checkClaudeAuth, checkGitLabConnection, checkLinearConnection, getProjectEnv, invokeClaudeSetup, updateProjectEnv
+  - apps/frontend/src/renderer/components/project-settings/GitHubOAuthFlow.tsx (5 usages)
+    Methods: checkGitHubAuth, checkGitHubCli, getGitHubToken, onGitHubAuthDeviceCode, startGitHubAuth
+  - apps/frontend/src/renderer/components/project-settings/ClaudeOAuthFlow.tsx (3 usages)
+    Methods: getClaudeProfiles, initializeClaudeProfile, onTerminalOAuthToken
+  - apps/frontend/src/renderer/components/project-settings/IntegrationSettings.tsx (2 usages)
+    Methods: detectMainBranch, getGitBranches
+  - apps/frontend/src/renderer/components/project-settings/MemoryBackendSection.tsx (2 usages)
+    Methods: checkOllamaStatus, listOllamaEmbeddingModels
+
+Domain: project-store.ts/ (1 files)
+  - apps/frontend/src/renderer/stores/project-store.ts (5 usages)
+    Methods: checkProjectVersion, getTabState, initializeProject, saveTabState, updateProjectSettings
+
+Domain: release-store.ts/ (1 files)
+  - apps/frontend/src/renderer/stores/release-store.ts (3 usages)
+    Methods: createRelease, getReleaseableVersions, runReleasePreflightCheck
+
+Domain: roadmap/ (1 files)
+  - apps/frontend/src/renderer/components/roadmap/hooks.ts (3 usages)
+    Methods: convertFeatureToSpec, saveRoadmap
+
+Domain: roadmap-store.ts/ (1 files)
+  - apps/frontend/src/renderer/stores/roadmap-store.ts (6 usages)
+    Methods: generateRoadmap, getRoadmap, getRoadmapStatus, refreshRoadmap, saveRoadmap, stopRoadmap
+
+Domain: root/ (1 files)
+  - apps/frontend/src/renderer/App.tsx (4 usages)
+    Methods: onAppUpdateDownloaded, selectDirectory, updateProjectEnv, updateProjectSettings
+
+Domain: settings/ (7 files)
+  - apps/frontend/src/renderer/components/settings/IntegrationSettings.tsx (11 usages)
+    Methods: deleteClaudeProfile, getAutoSwitchSettings, getClaudeProfiles, initializeClaudeProfile, onTerminalOAuthToken, renameClaudeProfile, saveClaudeProfile, setActiveClaudeProfile, setClaudeProfileToken, updateAutoSwitchSettings
+  - apps/frontend/src/renderer/components/settings/integrations/GitLabIntegration.tsx (10 usages)
+    Methods: checkGitLabAuth, checkGitLabCli, detectMainBranch, getGitBranches, getGitLabToken, getGitLabUser, installGitLabCli, listGitLabUserProjects, startGitLabAuth
+  - apps/frontend/src/renderer/components/settings/AdvancedSettings.tsx (9 usages)
+    Methods: checkAppUpdate, checkAutoBuildSourceUpdate, downloadAppUpdate, downloadAutoBuildSourceUpdate, installAppUpdate, onAppUpdateAvailable, onAppUpdateDownloaded, onAppUpdateProgress, onAutoBuildSourceUpdateProgress
+  - apps/frontend/src/renderer/components/settings/DebugSettings.tsx (3 usages)
+    Methods: copyDebugInfo, getDebugInfo, openLogsFolder
+  - apps/frontend/src/renderer/components/settings/DevToolsSettings.tsx (3 usages)
+    Methods: selectDirectory, worktreeDetectTools
+  - apps/frontend/src/renderer/components/settings/integrations/GitHubIntegration.tsx (3 usages)
+    Methods: detectMainBranch, getGitBranches, listGitHubUserRepos
+  - apps/frontend/src/renderer/components/settings/AppSettings.tsx (1 usages)
+    Methods: getAppVersion
+
+Domain: settings-store.ts/ (1 files)
+  - apps/frontend/src/renderer/stores/settings-store.ts (3 usages)
+    Methods: getSettings, saveSettings
+
+Domain: task-detail/ (5 files)
+  - apps/frontend/src/renderer/components/task-detail/hooks/useTaskDetail.ts (7 usages)
+    Methods: getTaskLogs, getWorktreeDiff, getWorktreeStatus, mergeWorktreePreview, onTaskLogsChanged, unwatchTaskLogs, watchTaskLogs
+  - apps/frontend/src/renderer/components/task-detail/TaskFiles.tsx (3 usages)
+    Methods: listDirectory, readFile, worktreeOpenInIDE
+  - apps/frontend/src/renderer/components/task-detail/TaskDetailModal.tsx (2 usages)
+    Methods: discardWorktree, mergeWorktree
+  - apps/frontend/src/renderer/components/task-detail/task-review/WorkspaceStatus.tsx (2 usages)
+    Methods: worktreeOpenInIDE, worktreeOpenInTerminal
+  - apps/frontend/src/renderer/components/task-detail/task-review/WorkspaceMessages.tsx (1 usages)
+    Methods: discardWorktree
+
+Domain: task-store.ts/ (1 files)
+  - apps/frontend/src/renderer/stores/task-store.ts (3 usages)
+    Methods: archiveTasks, createTask, updateTask
+
+Domain: terminal/ (4 files)
+  - apps/frontend/src/renderer/components/terminal/useTerminalEvents.ts (6 usages)
+    Methods: onTerminalClaudeSession, onTerminalExit, onTerminalOutput, onTerminalTitleChange, resizeTerminal, sendTerminalInput
+  - apps/frontend/src/renderer/components/terminal/usePtyProcess.ts (2 usages)
+    Methods: createTerminal, restoreTerminalSession
+  - apps/frontend/src/renderer/components/terminal/useAutoNaming.ts (1 usages)
+    Methods: generateTerminalName
+  - apps/frontend/src/renderer/components/terminal/useXterm.ts (1 usages)
+    Methods: sendTerminalInput
+
+Domain: terminal-store.ts/ (1 files)
+  - apps/frontend/src/renderer/stores/terminal-store.ts (2 usages)
+    Methods: checkTerminalPtyAlive, getTerminalSessions
+
+Domain: useIpc.ts/ (1 files)
+  - apps/frontend/src/renderer/hooks/useIpc.ts (15 usages)
+    Methods: getAppVersion, getSettings, onRoadmapComplete, onRoadmapError, onRoadmapProgress, onRoadmapStopped, onSDKRateLimit, onTaskError, onTaskExecutionProgress, onTaskLog, onTaskProgress, onTaskStatusChange, onTerminalRateLimit, saveSettings
+
+--- Top 20 Heavily Used Files ---
+20 - apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts
+17 - apps/frontend/src/renderer/stores/ideation-store.ts
+15 - apps/frontend/src/renderer/hooks/useIpc.ts
+14 - apps/frontend/src/renderer/components/github-issues/hooks/useAutoFix.ts
+13 - apps/frontend/src/renderer/stores/insights-store.ts
+12 - apps/frontend/src/renderer/components/github-prs/hooks/useGitHubPRs.ts
+11 - apps/frontend/src/renderer/components/settings/IntegrationSettings.tsx
+10 - apps/frontend/src/renderer/components/project-settings/hooks/useProjectSettings.ts
+10 - apps/frontend/src/renderer/components/settings/integrations/GitLabIntegration.tsx
+10 - apps/frontend/src/renderer/stores/changelog-store.ts
+9 - apps/frontend/src/renderer/components/GitHubSetupModal.tsx
+9 - apps/frontend/src/renderer/components/onboarding/OAuthStep.tsx
+9 - apps/frontend/src/renderer/components/settings/AdvancedSettings.tsx
+8 - apps/frontend/src/renderer/components/AddProjectModal.tsx
+8 - apps/frontend/src/renderer/components/TerminalGrid.tsx
+7 - apps/frontend/src/renderer/components/AgentTools.tsx
+7 - apps/frontend/src/renderer/components/EnvConfigModal.tsx
+7 - apps/frontend/src/renderer/components/task-detail/hooks/useTaskDetail.ts
+6 - apps/frontend/src/renderer/components/SDKRateLimitModal.tsx
+6 - apps/frontend/src/renderer/components/terminal/useTerminalEvents.ts

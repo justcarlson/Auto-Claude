@@ -14,7 +14,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { cn } from '../../lib/utils';
-import { isWebMode } from '../../lib/api';
+import { isWebMode, openExternalLink } from '../../lib/api';
 import { useDownloadStore } from '../../stores/download-store';
 
 type OllamaState = 'checking' | 'not-installed' | 'not-running' | 'available';
@@ -466,7 +466,7 @@ export function OllamaModelSelector({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => window.electronAPI?.openExternal?.('https://ollama.com')}
+                onClick={() => openExternalLink('https://ollama.com')}
                 className="text-muted-foreground"
               >
                 <ExternalLink className="h-3.5 w-3.5 mr-1.5" />

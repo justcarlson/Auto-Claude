@@ -40,6 +40,7 @@ import {
   DialogTitle
 } from './ui/dialog';
 import { cn } from '../lib/utils';
+import { getAPIClient, isWebMode } from '../lib/api';
 import {
   useProjectStore,
   removeProject,
@@ -115,12 +116,13 @@ export function Sidebar({
 
   const selectedProject = projects.find((p) => p.id === selectedProjectId);
 
-  // Load env config when project changes to check GitHub/GitLab enabled state
   useEffect(() => {
     const loadEnvConfig = async () => {
       if (selectedProject?.autoBuildPath) {
         try {
-          const result = await window.electronAPI.getProjectEnv(selectedProject.id);
+          const result = isWebMode()
+            ? await getAPIClient().getProjectEnv(selectedProject.id)
+            : await window.electronAPI.getProjectEnv(selectedProject.id);
           if (result.success && result.data) {
             setEnvConfig(result.data);
           } else {

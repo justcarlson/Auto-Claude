@@ -10,11 +10,23 @@ import type {
   APIClient, 
   APIResult, 
   Project, 
+  ProjectEnvConfig,
   Task, 
   TaskCreateInput, 
   TaskUpdateInput, 
   TaskStatus,
-  AppSettings 
+  AppSettings,
+  WorktreeStatus,
+  WorktreeDiff,
+  WorktreeMergeResult,
+  WorktreeListResult,
+  GitBranchesResult,
+  GitMainBranchResult,
+  GitStatusResult,
+  GitInitResult,
+  DirectoryListResult,
+  FileContentResult,
+  TaskLogs,
 } from './types';
 
 /**
@@ -81,12 +93,39 @@ export class WebAPIClient implements APIClient {
   }
 
   // Task execution (via WebSocket or POST)
-  startTask(taskId: string): void {
-    this.post(`/tasks/${taskId}/start`, {}).catch(console.error);
+  startTask(taskId: string, options?: { parallel?: boolean; workers?: number }): void {
+    this.post(`/tasks/${taskId}/start`, options || {}).catch(console.error);
   }
 
   stopTask(taskId: string): void {
     this.post(`/tasks/${taskId}/stop`, {}).catch(console.error);
+  }
+
+  async submitReview(
+    taskId: string, 
+    approved: boolean, 
+    feedback?: string
+  ): Promise<APIResult<{ success: boolean; status: string; feedback?: string }>> {
+    return this.post(`/tasks/${taskId}/review`, { approved, feedback });
+  }
+
+  async updateTaskStatus(taskId: string, status: TaskStatus): Promise<APIResult<Task>> {
+    return this.put(`/tasks/${taskId}/status`, { status });
+  }
+
+  async checkTaskRunning(taskId: string): Promise<APIResult<boolean>> {
+    const result = await this.get<{ running: boolean }>(`/tasks/${taskId}/running`);
+    if (result.success && result.data) {
+      return { success: true, data: result.data.running };
+    }
+    return { success: false, error: result.error };
+  }
+
+  async recoverStuckTask(
+    taskId: string, 
+    options?: { targetStatus?: TaskStatus; autoRestart?: boolean }
+  ): Promise<APIResult<{ success: boolean; newStatus: string; message: string; autoRestarted?: boolean }>> {
+    return this.post(`/tasks/${taskId}/recover`, options || {});
   }
 
   // ==========================================================================
@@ -99,6 +138,86 @@ export class WebAPIClient implements APIClient {
 
   async saveSettings(settings: Partial<AppSettings>): Promise<APIResult<void>> {
     return this.put('/settings', settings);
+  }
+
+  // ==========================================================================
+  // Project Environment
+  // ==========================================================================
+
+  async getProjectEnv(projectId: string): Promise<APIResult<ProjectEnvConfig>> {
+    return this.get(`/projects/${projectId}/env`);
+  }
+
+  async updateProjectEnv(projectId: string, config: Partial<ProjectEnvConfig>): Promise<APIResult<ProjectEnvConfig>> {
+    return this.put(`/projects/${projectId}/env`, config);
+  }
+
+  // ==========================================================================
+  // Worktree Operations
+  // ==========================================================================
+
+  async listWorktrees(projectId: string): Promise<APIResult<WorktreeListResult>> {
+    return this.get(`/projects/${projectId}/worktrees`);
+  }
+
+  async getWorktreeStatus(taskId: string): Promise<APIResult<WorktreeStatus>> {
+    return this.get(`/worktrees/${taskId}/status`);
+  }
+
+  async getWorktreeDiff(taskId: string): Promise<APIResult<WorktreeDiff>> {
+    return this.get(`/worktrees/${taskId}/diff`);
+  }
+
+  async mergeWorktreePreview(taskId: string): Promise<APIResult<WorktreeMergeResult>> {
+    return this.get(`/worktrees/${taskId}/merge/preview`);
+  }
+
+  async mergeWorktree(taskId: string, options?: { noCommit?: boolean }): Promise<APIResult<WorktreeMergeResult>> {
+    return this.post(`/worktrees/${taskId}/merge`, options || {});
+  }
+
+  async discardWorktree(taskId: string): Promise<APIResult<{ success: boolean; message: string }>> {
+    return this.post(`/worktrees/${taskId}/discard`, {});
+  }
+
+  // ==========================================================================
+  // Git Operations
+  // ==========================================================================
+
+  async getGitBranches(projectId: string): Promise<APIResult<GitBranchesResult>> {
+    return this.get(`/projects/${projectId}/git/branches`);
+  }
+
+  async getGitMainBranch(projectId: string): Promise<APIResult<GitMainBranchResult>> {
+    return this.get(`/projects/${projectId}/git/main-branch`);
+  }
+
+  async getGitStatus(projectId: string): Promise<APIResult<GitStatusResult>> {
+    return this.get(`/projects/${projectId}/git/status`);
+  }
+
+  async initGitRepo(projectId: string): Promise<APIResult<GitInitResult>> {
+    return this.post(`/projects/${projectId}/git/init`, {});
+  }
+
+  // ==========================================================================
+  // Filesystem Operations
+  // ==========================================================================
+
+  async listDirectory(projectId: string, path = ''): Promise<APIResult<DirectoryListResult>> {
+    return this.get(`/fs/list?project_id=${encodeURIComponent(projectId)}&path=${encodeURIComponent(path)}`);
+  }
+
+  async readFile(projectId: string, path: string): Promise<APIResult<FileContentResult>> {
+    return this.get(`/fs/read?project_id=${encodeURIComponent(projectId)}&path=${encodeURIComponent(path)}`);
+  }
+
+  // ==========================================================================
+  // Task Logs
+  // ==========================================================================
+
+  async getTaskLogs(taskId: string): Promise<APIResult<TaskLogs>> {
+    return this.get(`/tasks/${encodeURIComponent(taskId)}/logs`);
   }
 
   // ==========================================================================

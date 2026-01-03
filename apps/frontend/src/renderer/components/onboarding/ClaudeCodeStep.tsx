@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Terminal, Loader2, Check, AlertTriangle, X, RefreshCw, Download, Info, ExternalLink } from 'lucide-react';
 import { Button } from '../ui/button';
+import { openExternalLink } from '../../lib/api';
 import { Card, CardContent } from '../ui/card';
 import type { ClaudeCodeVersionInfo } from '../../../shared/types/cli';
 
@@ -282,7 +283,7 @@ export function ClaudeCodeStep({ onNext, onBack, onSkip }: ClaudeCodeStepProps) 
               variant="link"
               size="sm"
               className="text-muted-foreground gap-1"
-              onClick={() => window.electronAPI?.openExternal?.('https://claude.ai/code')}
+              onClick={() => openExternalLink('https://claude.ai/code')}
             >
               {t('claudeCode.learnMore', 'Learn more about Claude Code')}
               <ExternalLink className="h-3 w-3" />

@@ -6,6 +6,18 @@
  * These types define the contract that both ElectronAPIClient and WebAPIClient must implement.
  */
 
+import type { ProjectEnvConfig as SharedProjectEnvConfig } from '../../../shared/types/project';
+import type { 
+  WorktreeStatus, 
+  WorktreeDiff, 
+  WorktreeMergeResult, 
+  WorktreeListResult,
+  TaskLogs,
+} from '../../../shared/types/task';
+
+export type ProjectEnvConfig = SharedProjectEnvConfig;
+export type { WorktreeStatus, WorktreeDiff, WorktreeMergeResult, WorktreeListResult, TaskLogs };
+
 // =============================================================================
 // RESULT TYPES
 // =============================================================================
@@ -102,6 +114,62 @@ export interface AppSettings {
 }
 
 // =============================================================================
+// GIT TYPES
+// =============================================================================
+
+export interface GitBranch {
+  name: string;
+  current: boolean;
+}
+
+export interface GitBranchesResult {
+  branches: GitBranch[];
+}
+
+export interface GitMainBranchResult {
+  branch: string;
+  detected: boolean;
+}
+
+export interface GitStatusResult {
+  isRepo: boolean;
+  isDirty: boolean;
+  branch: string | null;
+  untrackedFiles: string[];
+  modifiedFiles: string[];
+  stagedFiles: string[];
+}
+
+export interface GitInitResult {
+  success: boolean;
+  initialized: boolean;
+  alreadyRepo: boolean;
+  message?: string;
+}
+
+// =============================================================================
+// FILESYSTEM TYPES
+// =============================================================================
+
+export interface FileNode {
+  name: string;
+  path: string;
+  type: 'file' | 'directory';
+  size?: number;
+}
+
+export interface DirectoryListResult {
+  nodes: FileNode[];
+}
+
+export interface FileContentResult {
+  path: string;
+  content: string | null;
+  isBinary: boolean;
+  size: number;
+}
+
+// =============================================================================
 // API CLIENT INTERFACE
 // =============================================================================
 
@@ -132,12 +200,41 @@ export interface APIClient {
   deleteTask(taskId: string): Promise<APIResult<void>>;
   
   // Task execution
-  startTask(taskId: string): void;
+  startTask(taskId: string, options?: { parallel?: boolean; workers?: number }): void;
   stopTask(taskId: string): void;
+  submitReview(taskId: string, approved: boolean, feedback?: string): Promise<APIResult<{ success: boolean; status: string; feedback?: string }>>;
+  updateTaskStatus(taskId: string, status: TaskStatus): Promise<APIResult<Task>>;
+  checkTaskRunning(taskId: string): Promise<APIResult<boolean>>;
+  recoverStuckTask(taskId: string, options?: { targetStatus?: TaskStatus; autoRestart?: boolean }): Promise<APIResult<{ success: boolean; newStatus: string; message: string; autoRestarted?: boolean }>>;
   
   // Settings
   getSettings(): Promise<APIResult<AppSettings>>;
   saveSettings(settings: Partial<AppSettings>): Promise<APIResult<void>>;
+  
+  // Project environment
+  getProjectEnv(projectId: string): Promise<APIResult<ProjectEnvConfig>>;
+  updateProjectEnv(projectId: string, config: Partial<ProjectEnvConfig>): Promise<APIResult<ProjectEnvConfig>>;
+  
+  // Worktree operations
+  listWorktrees(projectId: string): Promise<APIResult<WorktreeListResult>>;
+  getWorktreeStatus(taskId: string): Promise<APIResult<WorktreeStatus>>;
+  getWorktreeDiff(taskId: string): Promise<APIResult<WorktreeDiff>>;
+  mergeWorktreePreview(taskId: string): Promise<APIResult<WorktreeMergeResult>>;
+  mergeWorktree(taskId: string, options?: { noCommit?: boolean }): Promise<APIResult<WorktreeMergeResult>>;
+  discardWorktree(taskId: string): Promise<APIResult<{ success: boolean; message: string }>>;
+  
+  // Git operations
+  getGitBranches(projectId: string): Promise<APIResult<GitBranchesResult>>;
+  getGitMainBranch(projectId: string): Promise<APIResult<GitMainBranchResult>>;
+  getGitStatus(projectId: string): Promise<APIResult<GitStatusResult>>;
+  initGitRepo(projectId: string): Promise<APIResult<GitInitResult>>;
+  
+  // Filesystem operations
+  listDirectory(projectId: string, path?: string): Promise<APIResult<DirectoryListResult>>;
+  readFile(projectId: string, path: string): Promise<APIResult<FileContentResult>>;
+  
+  // Task logs
+  getTaskLogs(taskId: string): Promise<APIResult<TaskLogs>>;
   
   // Event subscriptions (return cleanup functions)
   onTaskProgress(callback: (taskId: string, progress: unknown) => void): () => void;
@@ -163,9 +260,12 @@ export interface TerminalClient {
   
   sendInput(data: string): void;
   resize(cols: number, rows: number): void;
+  setClaudeSession(sessionId: string): void;
   
   onOutput(callback: (data: string) => void): () => void;
   onConnected(callback: () => void): () => void;
   onDisconnected(callback: (reason?: string) => void): () => void;
   onError(callback: (error: string) => void): () => void;
+  onTitle(callback: (title: string) => void): () => void;
+  onClaudeSession(callback: (sessionId: string) => void): () => void;
 }

@@ -8,8 +8,29 @@ Provides REST and WebSocket endpoints for the React frontend.
 
 import os
 
-from api.routes import health_router, projects_router, tasks_router
-from api.services import ProjectService, TaskService
+from api.routes import (
+    filesystem_router,
+    git_router,
+    health_router,
+    projects_router,
+    settings_router,
+    task_execution_router,
+    task_logs_router,
+    tasks_router,
+    terminals_router,
+    worktrees_router,
+)
+from api.services import (
+    FilesystemService,
+    GitService,
+    ProjectService,
+    SettingsService,
+    TaskExecutionService,
+    TaskLogsService,
+    TaskService,
+    WorktreeService,
+)
+from api.websocket.task_events import reset_task_clients, task_events_websocket
 from api.websocket.terminal import reset_terminal_manager, terminal_websocket
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -43,21 +64,36 @@ app.add_middleware(
 )
 
 # Include routers
+app.include_router(filesystem_router)
+app.include_router(git_router)
 app.include_router(health_router)
 app.include_router(projects_router)
+app.include_router(settings_router)
+app.include_router(task_execution_router)
 app.include_router(tasks_router)
+app.include_router(terminals_router)
+app.include_router(worktrees_router)
+app.include_router(task_logs_router)
 
 # WebSocket routes
 app.websocket("/ws/terminal/{terminal_id}")(terminal_websocket)
+app.websocket("/ws/tasks/{task_id}/events")(task_events_websocket)
 
 
 @app.on_event("startup")
 async def startup_event():
     """Initialize resources on startup."""
     # Reset services for fresh start
+    FilesystemService.reset()
+    GitService.reset()
     ProjectService.reset()
+    SettingsService.reset()
     TaskService.reset()
+    TaskExecutionService.reset()
+    TaskLogsService.reset()
+    WorktreeService.reset()
     reset_terminal_manager()
+    reset_task_clients()
 
 
 @app.on_event("shutdown")

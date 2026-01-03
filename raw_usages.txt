@@ -1,0 +1,378 @@
+apps/frontend/src/renderer/App.tsx:    const cleanupDownloaded = window.electronAPI.onAppUpdateDownloaded(() => {
+apps/frontend/src/renderer/App.tsx:          const path = await window.electronAPI.selectDirectory();
+apps/frontend/src/renderer/App.tsx:      await window.electronAPI.updateProjectEnv(gitHubSetupProject.id, {
+apps/frontend/src/renderer/App.tsx:      await window.electronAPI.updateProjectSettings(gitHubSetupProject.id, {
+apps/frontend/src/renderer/components/AddFeatureDialog.tsx:        const result = await window.electronAPI.saveRoadmap(roadmap.projectId, roadmap);
+apps/frontend/src/renderer/components/AddProjectModal.tsx:        const defaultDir = await window.electronAPI.getDefaultProjectLocation();
+apps/frontend/src/renderer/components/AddProjectModal.tsx:      const path = await window.electronAPI.selectDirectory();
+apps/frontend/src/renderer/components/AddProjectModal.tsx:            const mainBranchResult = await window.electronAPI.detectMainBranch(path);
+apps/frontend/src/renderer/components/AddProjectModal.tsx:              await window.electronAPI.updateProjectSettings(project.id, {
+apps/frontend/src/renderer/components/AddProjectModal.tsx:      const path = await window.electronAPI.selectDirectory();
+apps/frontend/src/renderer/components/AddProjectModal.tsx:      const result = await window.electronAPI.createProjectFolder(
+apps/frontend/src/renderer/components/AddProjectModal.tsx:            const mainBranchResult = await window.electronAPI.detectMainBranch(result.data.path);
+apps/frontend/src/renderer/components/AddProjectModal.tsx:              await window.electronAPI.updateProjectSettings(project.id, {
+apps/frontend/src/renderer/components/AgentTools.tsx:        : window.electronAPI.getProjectEnv(selectedProjectId);
+apps/frontend/src/renderer/components/AgentTools.tsx:        : window.electronAPI.updateProjectEnv(selectedProjectId, { mcpServers: newMcpServers });
+apps/frontend/src/renderer/components/AgentTools.tsx:        : window.electronAPI.updateProjectEnv(selectedProjectId, { agentMcpOverrides: newOverrides });
+apps/frontend/src/renderer/components/AgentTools.tsx:        : window.electronAPI.updateProjectEnv(selectedProjectId, { agentMcpOverrides: newOverrides });
+apps/frontend/src/renderer/components/AgentTools.tsx:        : window.electronAPI.updateProjectEnv(selectedProjectId, { customMcpServers: newServers });
+apps/frontend/src/renderer/components/AgentTools.tsx:        : window.electronAPI.updateProjectEnv(selectedProjectId, { customMcpServers: newServers, agentMcpOverrides: newOverrides });
+apps/frontend/src/renderer/components/AgentTools.tsx:        const result = await window.electronAPI.checkMcpHealth(server);
+apps/frontend/src/renderer/components/AppUpdateNotification.tsx:    const cleanup = window.electronAPI.onAppUpdateAvailable((info) => {
+apps/frontend/src/renderer/components/AppUpdateNotification.tsx:    const cleanup = window.electronAPI.onAppUpdateDownloaded((_info) => {
+apps/frontend/src/renderer/components/AppUpdateNotification.tsx:    const cleanup = window.electronAPI.onAppUpdateProgress((progress) => {
+apps/frontend/src/renderer/components/AppUpdateNotification.tsx:      const result = await window.electronAPI.downloadAppUpdate();
+apps/frontend/src/renderer/components/AppUpdateNotification.tsx:    window.electronAPI.installAppUpdate();
+apps/frontend/src/renderer/components/ClaudeCodeStatusBadge.tsx:      const result = await window.electronAPI.checkClaudeCodeVersion();
+apps/frontend/src/renderer/components/ClaudeCodeStatusBadge.tsx:      const result = await window.electronAPI.installClaudeCode();
+apps/frontend/src/renderer/components/EnvConfigModal.tsx:          window.electronAPI.checkSourceToken(),
+apps/frontend/src/renderer/components/EnvConfigModal.tsx:          window.electronAPI.getClaudeProfiles()
+apps/frontend/src/renderer/components/EnvConfigModal.tsx:    const cleanup = window.electronAPI.onTerminalOAuthToken(async (info) => {
+apps/frontend/src/renderer/components/EnvConfigModal.tsx:      const result = await window.electronAPI.updateSourceEnv({
+apps/frontend/src/renderer/components/EnvConfigModal.tsx:      const result = await window.electronAPI.invokeClaudeSetup(projectId);
+apps/frontend/src/renderer/components/EnvConfigModal.tsx:      const result = await window.electronAPI.updateSourceEnv({
+apps/frontend/src/renderer/components/EnvConfigModal.tsx:      const result = await window.electronAPI.checkSourceToken();
+apps/frontend/src/renderer/components/GitHubSetupModal.tsx:          const ghTokenResult = await window.electronAPI.getGitHubToken();
+apps/frontend/src/renderer/components/GitHubSetupModal.tsx:          const profilesResult = await window.electronAPI.getClaudeProfiles();
+apps/frontend/src/renderer/components/GitHubSetupModal.tsx:      const userResult = await window.electronAPI.getGitHubUser();
+apps/frontend/src/renderer/components/GitHubSetupModal.tsx:      const orgsResult = await window.electronAPI.listGitHubOrgs();
+apps/frontend/src/renderer/components/GitHubSetupModal.tsx:      const result = await window.electronAPI.detectGitHubRepo(project.path);
+apps/frontend/src/renderer/components/GitHubSetupModal.tsx:      const result = await window.electronAPI.getGitHubBranches(repo, githubToken!);
+apps/frontend/src/renderer/components/GitHubSetupModal.tsx:      const profilesResult = await window.electronAPI.getClaudeProfiles();
+apps/frontend/src/renderer/components/GitHubSetupModal.tsx:      const result = await window.electronAPI.createGitHubRepo(newRepoName.trim(), {
+apps/frontend/src/renderer/components/GitHubSetupModal.tsx:      const result = await window.electronAPI.addGitRemote(project.path, existingRepoName.trim());
+apps/frontend/src/renderer/components/GitSetupModal.tsx:      const result = await window.electronAPI.initializeGit(project.path);
+apps/frontend/src/renderer/components/ProactiveSwapListener.tsx:    const unsubscribe = window.electronAPI.onProactiveSwapNotification((data) => {
+apps/frontend/src/renderer/components/RateLimitModal.tsx:      const result = await window.electronAPI.getAutoSwitchSettings();
+apps/frontend/src/renderer/components/RateLimitModal.tsx:      await window.electronAPI.updateAutoSwitchSettings({
+apps/frontend/src/renderer/components/RateLimitModal.tsx:      const result = await window.electronAPI.saveClaudeProfile({
+apps/frontend/src/renderer/components/RateLimitModal.tsx:        const initResult = await window.electronAPI.initializeClaudeProfile(result.data.id);
+apps/frontend/src/renderer/components/SDKRateLimitModal.tsx:      const result = await window.electronAPI.getAutoSwitchSettings();
+apps/frontend/src/renderer/components/SDKRateLimitModal.tsx:      await window.electronAPI.updateAutoSwitchSettings({
+apps/frontend/src/renderer/components/SDKRateLimitModal.tsx:      const result = await window.electronAPI.saveClaudeProfile({
+apps/frontend/src/renderer/components/SDKRateLimitModal.tsx:        const initResult = await window.electronAPI.initializeClaudeProfile(result.data.id);
+apps/frontend/src/renderer/components/SDKRateLimitModal.tsx:      await window.electronAPI.setActiveClaudeProfile(selectedProfileId);
+apps/frontend/src/renderer/components/SDKRateLimitModal.tsx:      const result = await window.electronAPI.retryWithProfile({
+apps/frontend/src/renderer/components/Sidebar.tsx:            : await window.electronAPI.getProjectEnv(selectedProject.id);
+apps/frontend/src/renderer/components/Sidebar.tsx:          const result = await window.electronAPI.checkGitStatus(selectedProject.path);
+apps/frontend/src/renderer/components/Sidebar.tsx:        const result = await window.electronAPI.checkGitStatus(selectedProject.path);
+apps/frontend/src/renderer/components/TaskCreationWizard.tsx:      const result = await window.electronAPI.getGitBranches(projectPath);
+apps/frontend/src/renderer/components/TaskCreationWizard.tsx:        : await window.electronAPI.getProjectEnv(projectId);
+apps/frontend/src/renderer/components/TaskCreationWizard.tsx:        const detectResult = await window.electronAPI.detectMainBranch(projectPath);
+apps/frontend/src/renderer/components/Terminal.tsx:        window.electronAPI.resizeTerminal(id, cols, rows);
+apps/frontend/src/renderer/components/Terminal.tsx:    window.electronAPI.invokeClaudeInTerminal(id, cwd);
+apps/frontend/src/renderer/components/Terminal.tsx:    window.electronAPI.sendTerminalInput(id, contextMessage + '\r');
+apps/frontend/src/renderer/components/TerminalGrid.tsx:        const result = await window.electronAPI.getTerminalSessionDates(projectPath);
+apps/frontend/src/renderer/components/TerminalGrid.tsx:      const sessionsResult = await window.electronAPI.getTerminalSessionsForDate(date, projectPath);
+apps/frontend/src/renderer/components/TerminalGrid.tsx:        await window.electronAPI.destroyTerminal(terminal.id);
+apps/frontend/src/renderer/components/TerminalGrid.tsx:      const result = await window.electronAPI.restoreTerminalSessionsFromDate(
+apps/frontend/src/renderer/components/TerminalGrid.tsx:        const datesResult = await window.electronAPI.getTerminalSessionDates(projectPath);
+apps/frontend/src/renderer/components/TerminalGrid.tsx:    window.electronAPI.destroyTerminal(id);
+apps/frontend/src/renderer/components/TerminalGrid.tsx:        window.electronAPI.invokeClaudeInTerminal(terminal.id, projectPath);
+apps/frontend/src/renderer/components/TerminalGrid.tsx:        window.electronAPI.sendTerminalInput(terminalId, quotedPath + ' ');
+apps/frontend/src/renderer/components/UsageIndicator.tsx:    const unsubscribe = window.electronAPI.onUsageUpdated((snapshot: ClaudeUsageSnapshot) => {
+apps/frontend/src/renderer/components/UsageIndicator.tsx:    window.electronAPI.requestUsageUpdate().then((result) => {
+apps/frontend/src/renderer/components/Worktrees.tsx:      const result = await window.electronAPI.listWorktrees(projectId);
+apps/frontend/src/renderer/components/Worktrees.tsx:      const result = await window.electronAPI.mergeWorktree(task.id);
+apps/frontend/src/renderer/components/Worktrees.tsx:      const result = await window.electronAPI.discardWorktree(task.id);
+apps/frontend/src/renderer/components/changelog/ArchiveTasksCard.tsx:      const result = await window.electronAPI.archiveTasks(projectId, selectedTaskIds, version);
+apps/frontend/src/renderer/components/changelog/GitHubReleaseCard.tsx:      const result = await window.electronAPI.createGitHubRelease(
+apps/frontend/src/renderer/components/changelog/PreviewPanel.tsx:        const result = await window.electronAPI.readLocalImage(projectPath, relativePath);
+apps/frontend/src/renderer/components/changelog/hooks/useChangelog.ts:    const cleanupProgress = window.electronAPI.onChangelogGenerationProgress(
+apps/frontend/src/renderer/components/changelog/hooks/useChangelog.ts:    const cleanupComplete = window.electronAPI.onChangelogGenerationComplete(
+apps/frontend/src/renderer/components/changelog/hooks/useChangelog.ts:    const cleanupError = window.electronAPI.onChangelogGenerationError(
+apps/frontend/src/renderer/components/changelog/hooks/useChangelog.ts:          const result = await window.electronAPI.suggestChangelogVersion(
+apps/frontend/src/renderer/components/changelog/hooks/useChangelog.ts:          const result = await window.electronAPI.suggestChangelogVersionFromCommits(
+apps/frontend/src/renderer/components/changelog/hooks/useImageUpload.ts:      const result = await window.electronAPI.saveChangelogImage(
+apps/frontend/src/renderer/components/github-issues/components/AutoFixButton.tsx:    const cleanupProgress = window.electronAPI.github.onAutoFixProgress(
+apps/frontend/src/renderer/components/github-issues/components/AutoFixButton.tsx:    const cleanupComplete = window.electronAPI.github.onAutoFixComplete(
+apps/frontend/src/renderer/components/github-issues/components/AutoFixButton.tsx:    const cleanupError = window.electronAPI.github.onAutoFixError(
+apps/frontend/src/renderer/components/github-issues/components/AutoFixButton.tsx:    window.electronAPI.github.startAutoFix(projectId, issue.number);
+apps/frontend/src/renderer/components/github-issues/components/InvestigationDialog.tsx:      window.electronAPI.getIssueComments(projectId, selectedIssue.number)
+apps/frontend/src/renderer/components/github-issues/hooks/useAnalyzePreview.ts:    const cleanupProgress = window.electronAPI.github.onAnalyzePreviewProgress(
+apps/frontend/src/renderer/components/github-issues/hooks/useAnalyzePreview.ts:    const cleanupComplete = window.electronAPI.github.onAnalyzePreviewComplete(
+apps/frontend/src/renderer/components/github-issues/hooks/useAnalyzePreview.ts:    const cleanupError = window.electronAPI.github.onAnalyzePreviewError(
+apps/frontend/src/renderer/components/github-issues/hooks/useAnalyzePreview.ts:    window.electronAPI.github.analyzeIssuesPreview(projectId, undefined, 200);
+apps/frontend/src/renderer/components/github-issues/hooks/useAnalyzePreview.ts:      const result = await window.electronAPI.github.approveBatches(projectId, batches);
+apps/frontend/src/renderer/components/github-issues/hooks/useAutoFix.ts:        window.electronAPI.github.getAutoFixConfig(projectId),
+apps/frontend/src/renderer/components/github-issues/hooks/useAutoFix.ts:        window.electronAPI.github.getAutoFixQueue(projectId),
+apps/frontend/src/renderer/components/github-issues/hooks/useAutoFix.ts:        window.electronAPI.github.getBatches(projectId),
+apps/frontend/src/renderer/components/github-issues/hooks/useAutoFix.ts:    const cleanupComplete = window.electronAPI.github.onAutoFixComplete(
+apps/frontend/src/renderer/components/github-issues/hooks/useAutoFix.ts:          window.electronAPI.github.getAutoFixQueue(projectId).then(setQueue);
+apps/frontend/src/renderer/components/github-issues/hooks/useAutoFix.ts:    const cleanupProgress = window.electronAPI.github.onBatchProgress(
+apps/frontend/src/renderer/components/github-issues/hooks/useAutoFix.ts:    const cleanupComplete = window.electronAPI.github.onBatchComplete(
+apps/frontend/src/renderer/components/github-issues/hooks/useAutoFix.ts:    const cleanupError = window.electronAPI.github.onBatchError(
+apps/frontend/src/renderer/components/github-issues/hooks/useAutoFix.ts:        const success = await window.electronAPI.github.saveAutoFixConfig(projectId, newConfig);
+apps/frontend/src/renderer/components/github-issues/hooks/useAutoFix.ts:      window.electronAPI.github.batchAutoFix(projectId, issueNumbers);
+apps/frontend/src/renderer/components/github-issues/hooks/useAutoFix.ts:        const newIssues = await window.electronAPI.github.checkNewIssues(projectId);
+apps/frontend/src/renderer/components/github-issues/hooks/useAutoFix.ts:            window.electronAPI.github.startAutoFix(projectId, issue.number);
+apps/frontend/src/renderer/components/github-issues/hooks/useAutoFix.ts:      const newIssues = await window.electronAPI.github.checkNewIssues(projectId);
+apps/frontend/src/renderer/components/github-issues/hooks/useAutoFix.ts:          window.electronAPI.github.startAutoFix(projectId, issue.number);
+apps/frontend/src/renderer/components/github-issues/hooks/useGitHubInvestigation.ts:    const cleanupProgress = window.electronAPI.onGitHubInvestigationProgress(
+apps/frontend/src/renderer/components/github-issues/hooks/useGitHubInvestigation.ts:    const cleanupComplete = window.electronAPI.onGitHubInvestigationComplete(
+apps/frontend/src/renderer/components/github-issues/hooks/useGitHubInvestigation.ts:    const cleanupError = window.electronAPI.onGitHubInvestigationError(
+apps/frontend/src/renderer/components/github-prs/GitHubPRs.tsx:      return await window.electronAPI.github.getPRLogs(selectedProjectId, selectedPRNumber);
+apps/frontend/src/renderer/components/github-prs/hooks/useGitHubPRs.ts:      const connectionResult = await window.electronAPI.github.checkGitHubConnection(projectId);
+apps/frontend/src/renderer/components/github-prs/hooks/useGitHubPRs.ts:          const result = await window.electronAPI.github.listPRs(projectId);
+apps/frontend/src/renderer/components/github-prs/hooks/useGitHubPRs.ts:                const reviewResult = await window.electronAPI.github.getPRReview(projectId, pr.number);
+apps/frontend/src/renderer/components/github-prs/hooks/useGitHubPRs.ts:                    const newCommitsResult = await window.electronAPI.github.checkNewCommits(projectId, prNumber);
+apps/frontend/src/renderer/components/github-prs/hooks/useGitHubPRs.ts:        window.electronAPI.github.getPRReview(projectId, prNumber).then(result => {
+apps/frontend/src/renderer/components/github-prs/hooks/useGitHubPRs.ts:      const result = await window.electronAPI.github.checkNewCommits(projectId, prNumber);
+apps/frontend/src/renderer/components/github-prs/hooks/useGitHubPRs.ts:      const success = await window.electronAPI.github.cancelPRReview(projectId, prNumber);
+apps/frontend/src/renderer/components/github-prs/hooks/useGitHubPRs.ts:      const success = await window.electronAPI.github.postPRReview(projectId, prNumber, selectedFindingIds);
+apps/frontend/src/renderer/components/github-prs/hooks/useGitHubPRs.ts:        const result = await window.electronAPI.github.getPRReview(projectId, prNumber);
+apps/frontend/src/renderer/components/github-prs/hooks/useGitHubPRs.ts:      return await window.electronAPI.github.postPRComment(projectId, prNumber, body);
+apps/frontend/src/renderer/components/github-prs/hooks/useGitHubPRs.ts:      const success = await window.electronAPI.github.mergePR(projectId, prNumber, mergeMethod);
+apps/frontend/src/renderer/components/github-prs/hooks/useGitHubPRs.ts:      const success = await window.electronAPI.github.assignPR(projectId, prNumber, username);
+apps/frontend/src/renderer/components/gitlab-issues/components/InvestigationDialog.tsx:      window.electronAPI.getGitLabIssueNotes(projectId, selectedIssue.iid)
+apps/frontend/src/renderer/components/gitlab-issues/hooks/useGitLabInvestigation.ts:    const cleanupProgress = window.electronAPI.onGitLabInvestigationProgress(
+apps/frontend/src/renderer/components/gitlab-issues/hooks/useGitLabInvestigation.ts:    const cleanupComplete = window.electronAPI.onGitLabInvestigationComplete(
+apps/frontend/src/renderer/components/gitlab-issues/hooks/useGitLabInvestigation.ts:    const cleanupError = window.electronAPI.onGitLabInvestigationError(
+apps/frontend/src/renderer/components/gitlab-merge-requests/components/CreateMergeRequestDialog.tsx:      const result = await window.electronAPI.createGitLabMergeRequest(projectId, {
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:      const connectionResult = await window.electronAPI.checkGitLabConnection(projectId);
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:          const result = await window.electronAPI.getGitLabMergeRequests(projectId, stateFilter);
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:              if (!existingState?.result && window.electronAPI.getGitLabMRReview) {
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:                window.electronAPI.getGitLabMRReview(projectId, mr.iid).then(reviewResult => {
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:      if (!existingState?.result && window.electronAPI.getGitLabMRReview) {
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:        window.electronAPI.getGitLabMRReview(projectId, mrIid).then(result => {
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:    if (!projectId || !window.electronAPI.checkGitLabMRNewCommits) {
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:      const result = await window.electronAPI.checkGitLabMRNewCommits(projectId, mrIid);
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:    if (!projectId || !window.electronAPI.cancelGitLabMRReview) return false;
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:      const success = await window.electronAPI.cancelGitLabMRReview(projectId, mrIid);
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:    if (!projectId || !window.electronAPI.postGitLabMRReview) return false;
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:      return await window.electronAPI.postGitLabMRReview(projectId, mrIid, selectedFindingIds);
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:    if (!projectId || !window.electronAPI.postGitLabMRNote) return false;
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:      return await window.electronAPI.postGitLabMRNote(projectId, mrIid, body);
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:    if (!projectId || !window.electronAPI.mergeGitLabMR) return false;
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:      const success = await window.electronAPI.mergeGitLabMR(projectId, mrIid, mergeMethod);
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:    if (!projectId || !window.electronAPI.assignGitLabMR) return false;
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:      const success = await window.electronAPI.assignGitLabMR(projectId, mrIid, userIds);
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:    if (!projectId || !window.electronAPI.approveGitLabMR) return false;
+apps/frontend/src/renderer/components/gitlab-merge-requests/hooks/useGitLabMRs.ts:      return await window.electronAPI.approveGitLabMR(projectId, mrIid);
+apps/frontend/src/renderer/components/ideation/hooks/useIdeation.ts:    const result = await window.electronAPI.convertIdeaToTask(projectId, idea.id);
+apps/frontend/src/renderer/components/ideation/hooks/useIdeation.ts:    const result = await window.electronAPI.dismissIdea(projectId, idea.id);
+apps/frontend/src/renderer/components/linear-import/hooks/useLinearImport.ts:        const result = await window.electronAPI.importLinearIssues(
+apps/frontend/src/renderer/components/linear-import/hooks/useLinearIssues.ts:        const result = await window.electronAPI.getLinearIssues(
+apps/frontend/src/renderer/components/linear-import/hooks/useLinearProjects.ts:        const result = await window.electronAPI.getLinearProjects(
+apps/frontend/src/renderer/components/linear-import/hooks/useLinearTeams.ts:        const result = await window.electronAPI.getLinearTeams(projectId);
+apps/frontend/src/renderer/components/onboarding/ClaudeCodeStep.tsx:      const result = await window.electronAPI.checkClaudeCodeVersion();
+apps/frontend/src/renderer/components/onboarding/ClaudeCodeStep.tsx:      const result = await window.electronAPI.installClaudeCode();
+apps/frontend/src/renderer/components/onboarding/DevToolsStep.tsx:      const result = await window.electronAPI.worktreeDetectTools();
+apps/frontend/src/renderer/components/onboarding/DevToolsStep.tsx:      const result = await window.electronAPI.saveSettings(settingsToSave);
+apps/frontend/src/renderer/components/onboarding/GraphitiStep.tsx:        const result = await window.electronAPI.getMemoryInfrastructureStatus();
+apps/frontend/src/renderer/components/onboarding/GraphitiStep.tsx:      const result = await window.electronAPI.saveSettings(settingsToSave);
+apps/frontend/src/renderer/components/onboarding/MemoryStep.tsx:        const result = await window.electronAPI.getMemoryInfrastructureStatus();
+apps/frontend/src/renderer/components/onboarding/MemoryStep.tsx:      const result = await window.electronAPI.saveSettings(settingsToSave);
+apps/frontend/src/renderer/components/onboarding/OnboardingWizard.tsx:      const result = await window.electronAPI.saveSettings({ onboardingCompleted: true });
+apps/frontend/src/renderer/components/onboarding/OnboardingWizard.tsx:      const result = await window.electronAPI.saveSettings({ onboardingCompleted: true });
+apps/frontend/src/renderer/components/onboarding/OAuthStep.tsx:      const result = await window.electronAPI.getClaudeProfiles();
+apps/frontend/src/renderer/components/onboarding/OAuthStep.tsx:    const unsubscribe = window.electronAPI.onTerminalOAuthToken(async (info) => {
+apps/frontend/src/renderer/components/onboarding/OAuthStep.tsx:      const result = await window.electronAPI.saveClaudeProfile({
+apps/frontend/src/renderer/components/onboarding/OAuthStep.tsx:        const initResult = await window.electronAPI.initializeClaudeProfile(result.data.id);
+apps/frontend/src/renderer/components/onboarding/OAuthStep.tsx:      const result = await window.electronAPI.deleteClaudeProfile(profileId);
+apps/frontend/src/renderer/components/onboarding/OAuthStep.tsx:      const result = await window.electronAPI.renameClaudeProfile(editingProfileId, editingProfileName.trim());
+apps/frontend/src/renderer/components/onboarding/OAuthStep.tsx:      const result = await window.electronAPI.setActiveClaudeProfile(profileId);
+apps/frontend/src/renderer/components/onboarding/OAuthStep.tsx:      const initResult = await window.electronAPI.initializeClaudeProfile(profileId);
+apps/frontend/src/renderer/components/onboarding/OAuthStep.tsx:      const result = await window.electronAPI.setClaudeProfileToken(
+apps/frontend/src/renderer/components/onboarding/OllamaModelSelector.tsx:      const installResult = await window.electronAPI.checkOllamaInstalled();
+apps/frontend/src/renderer/components/onboarding/OllamaModelSelector.tsx:      const statusResult = await window.electronAPI.checkOllamaStatus();
+apps/frontend/src/renderer/components/onboarding/OllamaModelSelector.tsx:      const result = await window.electronAPI.listOllamaEmbeddingModels();
+apps/frontend/src/renderer/components/onboarding/OllamaModelSelector.tsx:      const result = await window.electronAPI.installOllama();
+apps/frontend/src/renderer/components/onboarding/OllamaModelSelector.tsx:       const result = await window.electronAPI.pullOllamaModel(modelName);
+apps/frontend/src/renderer/components/project-settings/ClaudeOAuthFlow.tsx:    const unsubscribe = window.electronAPI.onTerminalOAuthToken((info) => {
+apps/frontend/src/renderer/components/project-settings/ClaudeOAuthFlow.tsx:      const profilesResult = await window.electronAPI.getClaudeProfiles();
+apps/frontend/src/renderer/components/project-settings/ClaudeOAuthFlow.tsx:      const result = await window.electronAPI.initializeClaudeProfile(activeProfileId);
+apps/frontend/src/renderer/components/project-settings/GitHubOAuthFlow.tsx:    const cleanup = window.electronAPI.onGitHubAuthDeviceCode((data) => {
+apps/frontend/src/renderer/components/project-settings/GitHubOAuthFlow.tsx:      const cliResult = await window.electronAPI.checkGitHubCli();
+apps/frontend/src/renderer/components/project-settings/GitHubOAuthFlow.tsx:      const authResult = await window.electronAPI.checkGitHubAuth();
+apps/frontend/src/renderer/components/project-settings/GitHubOAuthFlow.tsx:      const tokenResult = await window.electronAPI.getGitHubToken();
+apps/frontend/src/renderer/components/project-settings/GitHubOAuthFlow.tsx:      const result = await window.electronAPI.startGitHubAuth();
+apps/frontend/src/renderer/components/project-settings/IntegrationSettings.tsx:      const result = await window.electronAPI.getGitBranches(project.path);
+apps/frontend/src/renderer/components/project-settings/IntegrationSettings.tsx:          const detectResult = await window.electronAPI.detectMainBranch(project.path);
+apps/frontend/src/renderer/components/project-settings/MemoryBackendSection.tsx:      const statusResult = await window.electronAPI.checkOllamaStatus(ollamaBaseUrl);
+apps/frontend/src/renderer/components/project-settings/MemoryBackendSection.tsx:      const modelsResult = await window.electronAPI.listOllamaEmbeddingModels(ollamaBaseUrl);
+apps/frontend/src/renderer/components/project-settings/hooks/useProjectSettings.ts:            : await window.electronAPI.getProjectEnv(project.id);
+apps/frontend/src/renderer/components/project-settings/hooks/useProjectSettings.ts:          const result = await window.electronAPI.checkClaudeAuth(project.id);
+apps/frontend/src/renderer/components/project-settings/hooks/useProjectSettings.ts:        const result = await window.electronAPI.checkLinearConnection(project.id);
+apps/frontend/src/renderer/components/project-settings/hooks/useProjectSettings.ts:        const status = await window.electronAPI.checkGitLabConnection(project.id);
+apps/frontend/src/renderer/components/project-settings/hooks/useProjectSettings.ts:          : await window.electronAPI.getProjectEnv(project.id);
+apps/frontend/src/renderer/components/project-settings/hooks/useProjectSettings.ts:        : await window.electronAPI.updateProjectEnv(project.id, envConfig);
+apps/frontend/src/renderer/components/project-settings/hooks/useProjectSettings.ts:      const result = await window.electronAPI.invokeClaudeSetup(project.id);
+apps/frontend/src/renderer/components/project-settings/hooks/useProjectSettings.ts:          : await window.electronAPI.getProjectEnv(project.id);
+apps/frontend/src/renderer/components/project-settings/hooks/useProjectSettings.ts:          : await window.electronAPI.updateProjectEnv(project.id, envConfig);
+apps/frontend/src/renderer/components/project-settings/hooks/useProjectSettings.ts:          : await window.electronAPI.updateProjectEnv(project.id, newConfig);
+apps/frontend/src/renderer/components/roadmap/hooks.ts:    const result = await window.electronAPI.convertFeatureToSpec(projectId, feature.id);
+apps/frontend/src/renderer/components/roadmap/hooks.ts:      await window.electronAPI.saveRoadmap(projectId, roadmap);
+apps/frontend/src/renderer/components/roadmap/hooks.ts:        await window.electronAPI.saveRoadmap(projectId, roadmap);
+apps/frontend/src/renderer/components/settings/AdvancedSettings.tsx:    const cleanup = window.electronAPI.onAutoBuildSourceUpdateProgress((progress) => {
+apps/frontend/src/renderer/components/settings/AdvancedSettings.tsx:    const cleanupAvailable = window.electronAPI.onAppUpdateAvailable((info) => {
+apps/frontend/src/renderer/components/settings/AdvancedSettings.tsx:    const cleanupDownloaded = window.electronAPI.onAppUpdateDownloaded((info) => {
+apps/frontend/src/renderer/components/settings/AdvancedSettings.tsx:    const cleanupProgress = window.electronAPI.onAppUpdateProgress((progress) => {
+apps/frontend/src/renderer/components/settings/AdvancedSettings.tsx:      const result = await window.electronAPI.checkAppUpdate();
+apps/frontend/src/renderer/components/settings/AdvancedSettings.tsx:      await window.electronAPI.downloadAppUpdate();
+apps/frontend/src/renderer/components/settings/AdvancedSettings.tsx:    window.electronAPI.installAppUpdate();
+apps/frontend/src/renderer/components/settings/AdvancedSettings.tsx:      const result = await window.electronAPI.checkAutoBuildSourceUpdate();
+apps/frontend/src/renderer/components/settings/AdvancedSettings.tsx:    window.electronAPI.downloadAutoBuildSourceUpdate();
+apps/frontend/src/renderer/components/settings/AppSettings.tsx:    window.electronAPI.getAppVersion().then(setVersion);
+apps/frontend/src/renderer/components/settings/DebugSettings.tsx:      const info = await window.electronAPI.getDebugInfo();
+apps/frontend/src/renderer/components/settings/DebugSettings.tsx:      const result = await window.electronAPI.openLogsFolder();
+apps/frontend/src/renderer/components/settings/DebugSettings.tsx:      const result = await window.electronAPI.copyDebugInfo();
+apps/frontend/src/renderer/components/settings/DevToolsSettings.tsx:      const result = await window.electronAPI.worktreeDetectTools();
+apps/frontend/src/renderer/components/settings/DevToolsSettings.tsx:                    const result = await window.electronAPI.selectDirectory();
+apps/frontend/src/renderer/components/settings/DevToolsSettings.tsx:                    const result = await window.electronAPI.selectDirectory();
+apps/frontend/src/renderer/components/settings/IntegrationSettings.tsx:    const unsubscribe = window.electronAPI.onTerminalOAuthToken(async (info) => {
+apps/frontend/src/renderer/components/settings/IntegrationSettings.tsx:      const result = await window.electronAPI.getClaudeProfiles();
+apps/frontend/src/renderer/components/settings/IntegrationSettings.tsx:      const result = await window.electronAPI.saveClaudeProfile({
+apps/frontend/src/renderer/components/settings/IntegrationSettings.tsx:        const initResult = await window.electronAPI.initializeClaudeProfile(result.data.id);
+apps/frontend/src/renderer/components/settings/IntegrationSettings.tsx:      const result = await window.electronAPI.deleteClaudeProfile(profileId);
+apps/frontend/src/renderer/components/settings/IntegrationSettings.tsx:      const result = await window.electronAPI.renameClaudeProfile(editingProfileId, editingProfileName.trim());
+apps/frontend/src/renderer/components/settings/IntegrationSettings.tsx:      const result = await window.electronAPI.setActiveClaudeProfile(profileId);
+apps/frontend/src/renderer/components/settings/IntegrationSettings.tsx:      const initResult = await window.electronAPI.initializeClaudeProfile(profileId);
+apps/frontend/src/renderer/components/settings/IntegrationSettings.tsx:      const result = await window.electronAPI.setClaudeProfileToken(
+apps/frontend/src/renderer/components/settings/IntegrationSettings.tsx:      const result = await window.electronAPI.getAutoSwitchSettings();
+apps/frontend/src/renderer/components/settings/IntegrationSettings.tsx:      const result = await window.electronAPI.updateAutoSwitchSettings(updates);
+apps/frontend/src/renderer/components/settings/integrations/GitHubIntegration.tsx:      const result = await window.electronAPI.getGitBranches(projectPath);
+apps/frontend/src/renderer/components/settings/integrations/GitHubIntegration.tsx:          const detectResult = await window.electronAPI.detectMainBranch(projectPath);
+apps/frontend/src/renderer/components/settings/integrations/GitHubIntegration.tsx:      const result = await window.electronAPI.listGitHubUserRepos();
+apps/frontend/src/renderer/components/settings/integrations/GitLabIntegration.tsx:        const result = await window.electronAPI.checkGitLabCli();
+apps/frontend/src/renderer/components/settings/integrations/GitLabIntegration.tsx:      const result = await window.electronAPI.getGitBranches(projectPath);
+apps/frontend/src/renderer/components/settings/integrations/GitLabIntegration.tsx:          const detectResult = await window.electronAPI.detectMainBranch(projectPath);
+apps/frontend/src/renderer/components/settings/integrations/GitLabIntegration.tsx:      const result = await window.electronAPI.listGitLabUserProjects(hostname);
+apps/frontend/src/renderer/components/settings/integrations/GitLabIntegration.tsx:      const tokenResult = await window.electronAPI.getGitLabToken(hostname);
+apps/frontend/src/renderer/components/settings/integrations/GitLabIntegration.tsx:      const userResult = await window.electronAPI.getGitLabUser(hostname);
+apps/frontend/src/renderer/components/settings/integrations/GitLabIntegration.tsx:    const result = await window.electronAPI.startGitLabAuth(hostname);
+apps/frontend/src/renderer/components/settings/integrations/GitLabIntegration.tsx:        const authResult = await window.electronAPI.checkGitLabAuth(hostname);
+apps/frontend/src/renderer/components/settings/integrations/GitLabIntegration.tsx:      const result = await window.electronAPI.installGitLabCli();
+apps/frontend/src/renderer/components/settings/integrations/GitLabIntegration.tsx:      const result = await window.electronAPI.checkGitLabCli();
+apps/frontend/src/renderer/components/task-detail/TaskDetailModal.tsx:      const result = await window.electronAPI.mergeWorktree(task.id, { noCommit: state.stageOnly });
+apps/frontend/src/renderer/components/task-detail/TaskDetailModal.tsx:    const result = await window.electronAPI.discardWorktree(task.id);
+apps/frontend/src/renderer/components/task-detail/TaskFiles.tsx:      const result = await window.electronAPI.listDirectory(task.specsPath);
+apps/frontend/src/renderer/components/task-detail/TaskFiles.tsx:      const result = await window.electronAPI.readFile(filePath);
+apps/frontend/src/renderer/components/task-detail/TaskFiles.tsx:      await window.electronAPI.worktreeOpenInIDE(
+apps/frontend/src/renderer/components/task-detail/hooks/useTaskDetail.ts:        window.electronAPI.getWorktreeStatus(task.id),
+apps/frontend/src/renderer/components/task-detail/hooks/useTaskDetail.ts:        window.electronAPI.getWorktreeDiff(task.id)
+apps/frontend/src/renderer/components/task-detail/hooks/useTaskDetail.ts:        const result = await window.electronAPI.getTaskLogs(selectedProject.id, task.specId);
+apps/frontend/src/renderer/components/task-detail/hooks/useTaskDetail.ts:    window.electronAPI.watchTaskLogs(selectedProject.id, task.specId);
+apps/frontend/src/renderer/components/task-detail/hooks/useTaskDetail.ts:    const unsubscribe = window.electronAPI.onTaskLogsChanged((specId, logs) => {
+apps/frontend/src/renderer/components/task-detail/hooks/useTaskDetail.ts:      window.electronAPI.unwatchTaskLogs(task.specId);
+apps/frontend/src/renderer/components/task-detail/hooks/useTaskDetail.ts:      const result = await window.electronAPI.mergeWorktreePreview(task.id);
+apps/frontend/src/renderer/components/task-detail/task-review/WorkspaceMessages.tsx:      const result = await window.electronAPI.discardWorktree(task.id);
+apps/frontend/src/renderer/components/task-detail/task-review/WorkspaceStatus.tsx:      await window.electronAPI.worktreeOpenInIDE(
+apps/frontend/src/renderer/components/task-detail/task-review/WorkspaceStatus.tsx:      await window.electronAPI.worktreeOpenInTerminal(
+apps/frontend/src/renderer/components/terminal/useAutoNaming.ts:      const result = await window.electronAPI.generateTerminalName(command, terminal?.cwd || cwd);
+apps/frontend/src/renderer/components/terminal/usePtyProcess.ts:      window.electronAPI.restoreTerminalSession(
+apps/frontend/src/renderer/components/terminal/usePtyProcess.ts:      window.electronAPI.createTerminal({
+apps/frontend/src/renderer/components/terminal/useTerminalEvents.ts:      const cleanupOutput = window.electronAPI.onTerminalOutput((id, data) => {
+apps/frontend/src/renderer/components/terminal/useTerminalEvents.ts:      const cleanupExit = window.electronAPI.onTerminalExit((id, exitCode) => {
+apps/frontend/src/renderer/components/terminal/useTerminalEvents.ts:      const cleanupTitle = window.electronAPI.onTerminalTitleChange((id, title) => {
+apps/frontend/src/renderer/components/terminal/useTerminalEvents.ts:      const cleanupClaudeSession = window.electronAPI.onTerminalClaudeSession((id, sessionId) => {
+apps/frontend/src/renderer/components/terminal/useTerminalEvents.ts:        window.electronAPI.sendTerminalInput(terminalId, data);
+apps/frontend/src/renderer/components/terminal/useTerminalEvents.ts:        window.electronAPI.resizeTerminal(terminalId, cols, rows);
+apps/frontend/src/renderer/components/terminal/useXterm.ts:      window.electronAPI.sendTerminalInput(terminalId, data);
+apps/frontend/src/renderer/hooks/useIpc.ts:    const cleanupProgress = window.electronAPI.onTaskProgress(
+apps/frontend/src/renderer/hooks/useIpc.ts:    const cleanupError = window.electronAPI.onTaskError(
+apps/frontend/src/renderer/hooks/useIpc.ts:    const cleanupLog = window.electronAPI.onTaskLog(
+apps/frontend/src/renderer/hooks/useIpc.ts:    const cleanupStatus = window.electronAPI.onTaskStatusChange(
+apps/frontend/src/renderer/hooks/useIpc.ts:    const cleanupExecutionProgress = window.electronAPI.onTaskExecutionProgress(
+apps/frontend/src/renderer/hooks/useIpc.ts:    const cleanupRoadmapProgress = window.electronAPI.onRoadmapProgress(
+apps/frontend/src/renderer/hooks/useIpc.ts:    const cleanupRoadmapComplete = window.electronAPI.onRoadmapComplete(
+apps/frontend/src/renderer/hooks/useIpc.ts:    const cleanupRoadmapError = window.electronAPI.onRoadmapError(
+apps/frontend/src/renderer/hooks/useIpc.ts:    const cleanupRoadmapStopped = window.electronAPI.onRoadmapStopped(
+apps/frontend/src/renderer/hooks/useIpc.ts:    const cleanupRateLimit = window.electronAPI.onTerminalRateLimit(
+apps/frontend/src/renderer/hooks/useIpc.ts:    const cleanupSDKRateLimit = window.electronAPI.onSDKRateLimit(
+apps/frontend/src/renderer/hooks/useIpc.ts:    const result = await window.electronAPI.getSettings();
+apps/frontend/src/renderer/hooks/useIpc.ts:  const saveSettings = async (settings: Parameters<typeof window.electronAPI.saveSettings>[0]) => {
+apps/frontend/src/renderer/hooks/useIpc.ts:    const result = await window.electronAPI.saveSettings(settings);
+apps/frontend/src/renderer/hooks/useIpc.ts:    return window.electronAPI.getAppVersion();
+apps/frontend/src/renderer/lib/buffer-persistence.ts:      await window.electronAPI.saveTerminalBuffer(terminalId, serialized);
+apps/frontend/src/renderer/lib/buffer-persistence.ts:      await window.electronAPI.saveTerminalBuffer(terminalId, serialized);
+apps/frontend/src/renderer/lib/api/client.ts:    window.electronAPI.openExternal(url);
+apps/frontend/src/renderer/lib/api/electron-client.ts:    return { success: false, error: 'Task logs via API not available in Electron mode. Use window.electronAPI.getTaskLogs instead.' };
+apps/frontend/src/renderer/stores/changelog-store.ts:    const tasksResult = await window.electronAPI.getChangelogDoneTasks(projectId, tasks);
+apps/frontend/src/renderer/stores/changelog-store.ts:    const changelogResult = await window.electronAPI.readExistingChangelog(projectId);
+apps/frontend/src/renderer/stores/changelog-store.ts:    const result = await window.electronAPI.loadTaskSpecs(projectId, taskIds);
+apps/frontend/src/renderer/stores/changelog-store.ts:      window.electronAPI.getChangelogBranches(projectId),
+apps/frontend/src/renderer/stores/changelog-store.ts:      window.electronAPI.getChangelogTags(projectId)
+apps/frontend/src/renderer/stores/changelog-store.ts:    const result = await window.electronAPI.getChangelogCommitsPreview(projectId, options, mode);
+apps/frontend/src/renderer/stores/changelog-store.ts:    window.electronAPI.generateChangelog({
+apps/frontend/src/renderer/stores/changelog-store.ts:    window.electronAPI.generateChangelog({
+apps/frontend/src/renderer/stores/changelog-store.ts:    window.electronAPI.generateChangelog({
+apps/frontend/src/renderer/stores/changelog-store.ts:    const result = await window.electronAPI.saveChangelog({
+apps/frontend/src/renderer/stores/claude-profile-store.ts:    const result = await window.electronAPI.getClaudeProfiles();
+apps/frontend/src/renderer/stores/claude-profile-store.ts:    const result = await window.electronAPI.switchClaudeProfile(terminalId, profileId);
+apps/frontend/src/renderer/stores/context-store.ts:    const result = await window.electronAPI.getProjectContext(projectId);
+apps/frontend/src/renderer/stores/context-store.ts:    const result = await window.electronAPI.refreshProjectIndex(projectId);
+apps/frontend/src/renderer/stores/context-store.ts:    const result = await window.electronAPI.searchMemories(projectId, query);
+apps/frontend/src/renderer/stores/context-store.ts:    const result = await window.electronAPI.getRecentMemories(projectId, limit);
+apps/frontend/src/renderer/stores/download-store.ts:    unsubscribe = window.electronAPI.onDownloadProgress(handleProgress);
+apps/frontend/src/renderer/stores/file-explorer-store.ts:      const result = await window.electronAPI.listDirectory(dirPath);
+apps/frontend/src/renderer/stores/github/investigation-store.ts:  window.electronAPI.investigateGitHubIssue(projectId, issueNumber, selectedCommentIds);
+apps/frontend/src/renderer/stores/github/issues-store.ts:    const result = await window.electronAPI.getGitHubIssues(projectId, state);
+apps/frontend/src/renderer/stores/github/issues-store.ts:    const result = await window.electronAPI.importGitHubIssues(projectId, issueNumbers);
+apps/frontend/src/renderer/stores/github/pr-review-store.ts:  window.electronAPI.github.onPRReviewProgress(
+apps/frontend/src/renderer/stores/github/pr-review-store.ts:  window.electronAPI.github.onPRReviewComplete(
+apps/frontend/src/renderer/stores/github/pr-review-store.ts:  window.electronAPI.github.onPRReviewError(
+apps/frontend/src/renderer/stores/github/pr-review-store.ts:  window.electronAPI.github.runPRReview(projectId, prNumber);
+apps/frontend/src/renderer/stores/github/pr-review-store.ts:  window.electronAPI.github.runFollowupReview(projectId, prNumber);
+apps/frontend/src/renderer/stores/github/sync-status-store.ts:    const result = await window.electronAPI.checkGitHubConnection(projectId);
+apps/frontend/src/renderer/stores/gitlab-store.ts:    const result = await window.electronAPI.getGitLabIssues(projectId, state);
+apps/frontend/src/renderer/stores/gitlab-store.ts:    const result = await window.electronAPI.checkGitLabConnection(projectId);
+apps/frontend/src/renderer/stores/gitlab-store.ts:  window.electronAPI.investigateGitLabIssue(projectId, issueIid, selectedNoteIds);
+apps/frontend/src/renderer/stores/gitlab-store.ts:    const result = await window.electronAPI.importGitLabIssues(projectId, issueIids);
+apps/frontend/src/renderer/stores/gitlab/mr-review-store.ts:  window.electronAPI.onGitLabMRReviewProgress(progressHandler);
+apps/frontend/src/renderer/stores/gitlab/mr-review-store.ts:  window.electronAPI.onGitLabMRReviewComplete(completeHandler);
+apps/frontend/src/renderer/stores/gitlab/mr-review-store.ts:  window.electronAPI.onGitLabMRReviewError(errorHandler);
+apps/frontend/src/renderer/stores/gitlab/mr-review-store.ts:  window.electronAPI.runGitLabMRReview(projectId, mrIid);
+apps/frontend/src/renderer/stores/gitlab/mr-review-store.ts:  window.electronAPI.runGitLabMRFollowupReview(projectId, mrIid);
+apps/frontend/src/renderer/stores/ideation-store.ts:  const result = await window.electronAPI.getIdeation(projectId);
+apps/frontend/src/renderer/stores/ideation-store.ts:  window.electronAPI.generateIdeation(projectId, config);
+apps/frontend/src/renderer/stores/ideation-store.ts:  const result = await window.electronAPI.stopIdeation(projectId);
+apps/frontend/src/renderer/stores/ideation-store.ts:  await window.electronAPI.stopIdeation(projectId);
+apps/frontend/src/renderer/stores/ideation-store.ts:  window.electronAPI.refreshIdeation(projectId, config);
+apps/frontend/src/renderer/stores/ideation-store.ts:  const result = await window.electronAPI.dismissAllIdeas(projectId);
+apps/frontend/src/renderer/stores/ideation-store.ts:  const result = await window.electronAPI.archiveIdea(projectId, ideaId);
+apps/frontend/src/renderer/stores/ideation-store.ts:  const result = await window.electronAPI.deleteIdea(projectId, ideaId);
+apps/frontend/src/renderer/stores/ideation-store.ts:  const result = await window.electronAPI.deleteMultipleIdeas(projectId, ideaIds);
+apps/frontend/src/renderer/stores/ideation-store.ts:  window.electronAPI.generateIdeation(projectId, appendConfig);
+apps/frontend/src/renderer/stores/ideation-store.ts:  const unsubProgress = window.electronAPI.onIdeationProgress((projectId, status) => {
+apps/frontend/src/renderer/stores/ideation-store.ts:  const unsubLog = window.electronAPI.onIdeationLog((projectId, log) => {
+apps/frontend/src/renderer/stores/ideation-store.ts:  const unsubTypeComplete = window.electronAPI.onIdeationTypeComplete(
+apps/frontend/src/renderer/stores/ideation-store.ts:  const unsubTypeFailed = window.electronAPI.onIdeationTypeFailed(
+apps/frontend/src/renderer/stores/ideation-store.ts:  const unsubComplete = window.electronAPI.onIdeationComplete((projectId, session) => {
+apps/frontend/src/renderer/stores/ideation-store.ts:  const unsubError = window.electronAPI.onIdeationError((projectId, error) => {
+apps/frontend/src/renderer/stores/ideation-store.ts:  const unsubStopped = window.electronAPI.onIdeationStopped((projectId) => {
+apps/frontend/src/renderer/stores/insights-store.ts:    const result = await window.electronAPI.listInsightsSessions(projectId);
+apps/frontend/src/renderer/stores/insights-store.ts:  const result = await window.electronAPI.getInsightsSession(projectId);
+apps/frontend/src/renderer/stores/insights-store.ts:  window.electronAPI.sendInsightsMessage(projectId, message, configToUse);
+apps/frontend/src/renderer/stores/insights-store.ts:  const result = await window.electronAPI.clearInsightsSession(projectId);
+apps/frontend/src/renderer/stores/insights-store.ts:  const result = await window.electronAPI.newInsightsSession(projectId);
+apps/frontend/src/renderer/stores/insights-store.ts:  const result = await window.electronAPI.switchInsightsSession(projectId, sessionId);
+apps/frontend/src/renderer/stores/insights-store.ts:  const result = await window.electronAPI.deleteInsightsSession(projectId, sessionId);
+apps/frontend/src/renderer/stores/insights-store.ts:  const result = await window.electronAPI.renameInsightsSession(projectId, sessionId, newTitle);
+apps/frontend/src/renderer/stores/insights-store.ts:  const result = await window.electronAPI.updateInsightsModelConfig(projectId, sessionId, modelConfig);
+apps/frontend/src/renderer/stores/insights-store.ts:  const result = await window.electronAPI.createTaskFromInsights(
+apps/frontend/src/renderer/stores/insights-store.ts:  const unsubStreamChunk = window.electronAPI.onInsightsStreamChunk(
+apps/frontend/src/renderer/stores/insights-store.ts:  const unsubStatus = window.electronAPI.onInsightsStatus((_projectId, status) => {
+apps/frontend/src/renderer/stores/insights-store.ts:  const unsubError = window.electronAPI.onInsightsError((_projectId, error) => {
+apps/frontend/src/renderer/stores/release-store.ts:    const result = await window.electronAPI.getReleaseableVersions(projectId);
+apps/frontend/src/renderer/stores/release-store.ts:    const result = await window.electronAPI.runReleasePreflightCheck(projectId, version);
+apps/frontend/src/renderer/stores/release-store.ts:  window.electronAPI.createRelease({
+apps/frontend/src/renderer/stores/roadmap-store.ts:  const statusResult = await window.electronAPI.getRoadmapStatus(projectId);
+apps/frontend/src/renderer/stores/roadmap-store.ts:  const result = await window.electronAPI.getRoadmap(projectId);
+apps/frontend/src/renderer/stores/roadmap-store.ts:      window.electronAPI.saveRoadmap(projectId, migratedRoadmap).catch((err) => {
+apps/frontend/src/renderer/stores/roadmap-store.ts:  window.electronAPI.generateRoadmap(projectId, enableCompetitorAnalysis, refreshCompetitorAnalysis);
+apps/frontend/src/renderer/stores/roadmap-store.ts:  window.electronAPI.refreshRoadmap(projectId, enableCompetitorAnalysis, refreshCompetitorAnalysis);
+apps/frontend/src/renderer/stores/roadmap-store.ts:  const result = await window.electronAPI.stopRoadmap(projectId);
+apps/frontend/src/renderer/stores/terminal-store.ts:            const result = await window.electronAPI.checkTerminalPtyAlive(terminal.id);
+apps/frontend/src/renderer/stores/terminal-store.ts:    const result = await window.electronAPI.getTerminalSessions(projectPath);
+apps/frontend/src/renderer/stores/project-store.ts:      await window.electronAPI.saveTabState(tabState);
+apps/frontend/src/renderer/stores/project-store.ts:      const tabStateResult = await window.electronAPI.getTabState();
+apps/frontend/src/renderer/stores/project-store.ts:    const result = await window.electronAPI.updateProjectSettings(
+apps/frontend/src/renderer/stores/project-store.ts:    const result = await window.electronAPI.checkProjectVersion(projectId);
+apps/frontend/src/renderer/stores/project-store.ts:    const result = await window.electronAPI.initializeProject(projectId);
+apps/frontend/src/renderer/stores/settings-store.ts:      const result = await window.electronAPI.getSettings();
+apps/frontend/src/renderer/stores/settings-store.ts:          await window.electronAPI.saveSettings({
+apps/frontend/src/renderer/stores/settings-store.ts:      const result = await window.electronAPI.saveSettings(updates);
+apps/frontend/src/renderer/stores/task-store.ts:      const result = await window.electronAPI.createTask(projectId, title, description, metadata);
+apps/frontend/src/renderer/stores/task-store.ts:    const result = await window.electronAPI.updateTask(taskId, updates);
+apps/frontend/src/renderer/stores/task-store.ts:    const result = await window.electronAPI.archiveTasks(projectId, taskIds, version);

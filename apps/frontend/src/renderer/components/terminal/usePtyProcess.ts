@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useTerminalStore } from '../../stores/terminal-store';
+import { isWebMode } from '../../lib/api';
 
 interface UsePtyProcessOptions {
   terminalId: string;
@@ -9,6 +10,26 @@ interface UsePtyProcessOptions {
   rows: number;
   onCreated?: () => void;
   onError?: (error: string) => void;
+}
+
+async function createTerminalWeb(
+  cwd?: string,
+  cols = 80,
+  rows = 24
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const response = await fetch('/api/terminals', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cwd: cwd || '/tmp', cols, rows }),
+    });
+    if (!response.ok) {
+      return { success: false, error: `HTTP ${response.status}` };
+    }
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
+  }
 }
 
 export function usePtyProcess({
@@ -35,8 +56,24 @@ export function usePtyProcess({
 
     isCreatingRef.current = true;
 
-    if (isRestored && terminalState) {
-      // Restored session
+    if (isWebMode()) {
+      createTerminalWeb(isRestored ? terminalState?.cwd : cwd, cols, rows)
+        .then((result) => {
+          if (result.success) {
+            isCreatedRef.current = true;
+            if (isRestored && terminalState) {
+              setTerminalStatus(terminalId, terminalState.isClaudeMode ? 'claude-active' : 'running');
+              updateTerminal(terminalId, { isRestored: false });
+            } else if (!alreadyRunning) {
+              setTerminalStatus(terminalId, 'running');
+            }
+            onCreated?.();
+          } else {
+            onError?.(result.error || 'Unknown error');
+          }
+          isCreatingRef.current = false;
+        });
+    } else if (isRestored && terminalState) {
       window.electronAPI.restoreTerminalSession(
         {
           id: terminalState.id,
@@ -67,7 +104,6 @@ export function usePtyProcess({
         isCreatingRef.current = false;
       });
     } else {
-      // New terminal
       window.electronAPI.createTerminal({
         id: terminalId,
         cwd,

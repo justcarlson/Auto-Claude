@@ -5,6 +5,7 @@ import {
   initializeProject
 } from '../../../stores/project-store';
 import { checkGitHubConnection as checkGitHubConnectionGlobal } from '../../../stores/github';
+import { getAPIClient, isWebMode } from '../../../lib/api';
 import type {
   Project,
   ProjectSettings as ProjectSettingsType,
@@ -153,7 +154,9 @@ export function useProjectSettings(
         setIsLoadingEnv(true);
         setEnvError(null);
         try {
-          const result = await window.electronAPI.getProjectEnv(project.id);
+          const result = isWebMode()
+            ? await getAPIClient().getProjectEnv(project.id)
+            : await window.electronAPI.getProjectEnv(project.id);
           if (result.success && result.data) {
             setEnvConfig(result.data);
           } else {
@@ -284,7 +287,9 @@ export function useProjectSettings(
       if (result?.success) {
         const info = await checkProjectVersion(project.id);
         setVersionInfo(info);
-        const envResult = await window.electronAPI.getProjectEnv(project.id);
+        const envResult = isWebMode()
+          ? await getAPIClient().getProjectEnv(project.id)
+          : await window.electronAPI.getProjectEnv(project.id);
         if (envResult.success && envResult.data) {
           setEnvConfig(envResult.data);
         }
@@ -304,7 +309,9 @@ export function useProjectSettings(
     setIsSavingEnv(true);
     setEnvError(null);
     try {
-      const result = await window.electronAPI.updateProjectEnv(project.id, envConfig);
+      const result = isWebMode()
+        ? await getAPIClient().updateProjectEnv(project.id, envConfig)
+        : await window.electronAPI.updateProjectEnv(project.id, envConfig);
       if (!result.success) {
         setEnvError(result.error || 'Failed to save environment config');
       }
@@ -321,7 +328,9 @@ export function useProjectSettings(
       const result = await window.electronAPI.invokeClaudeSetup(project.id);
       if (result.success && result.data?.authenticated) {
         setClaudeAuthStatus('authenticated');
-        const envResult = await window.electronAPI.getProjectEnv(project.id);
+        const envResult = isWebMode()
+          ? await getAPIClient().getProjectEnv(project.id)
+          : await window.electronAPI.getProjectEnv(project.id);
         if (envResult.success && envResult.data) {
           setEnvConfig(envResult.data);
         }
@@ -345,7 +354,9 @@ export function useProjectSettings(
       }
 
       if (envConfig) {
-        const envResult = await window.electronAPI.updateProjectEnv(project.id, envConfig);
+        const envResult = isWebMode()
+          ? await getAPIClient().updateProjectEnv(project.id, envConfig)
+          : await window.electronAPI.updateProjectEnv(project.id, envConfig);
         if (!envResult.success) {
           setError(envResult.error || 'Failed to save environment config');
           return;
@@ -364,9 +375,10 @@ export function useProjectSettings(
     if (envConfig) {
       const newConfig = { ...envConfig, ...updates };
 
-      // Save to backend FIRST so disk is updated before effects run
       try {
-        const result = await window.electronAPI.updateProjectEnv(project.id, newConfig);
+        const result = isWebMode()
+          ? await getAPIClient().updateProjectEnv(project.id, newConfig)
+          : await window.electronAPI.updateProjectEnv(project.id, newConfig);
         if (!result.success) {
           console.error('[useProjectSettings] Failed to auto-save env config:', result.error);
         }
@@ -374,7 +386,6 @@ export function useProjectSettings(
         console.error('[useProjectSettings] Error auto-saving env config:', err);
       }
 
-      // Then update local state (triggers effects that read from disk)
       setEnvConfig(newConfig);
     }
   };
