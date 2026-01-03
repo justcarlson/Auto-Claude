@@ -147,6 +147,28 @@ export interface GitInitResult {
 }
 
 // =============================================================================
+// FILESYSTEM TYPES
+// =============================================================================
+
+export interface FileNode {
+  name: string;
+  path: string;
+  type: 'file' | 'directory';
+  size?: number;
+}
+
+export interface DirectoryListResult {
+  nodes: FileNode[];
+}
+
+export interface FileContentResult {
+  path: string;
+  content: string | null;
+  isBinary: boolean;
+  size: number;
+}
+
+// =============================================================================
 // API CLIENT INTERFACE
 // =============================================================================
 
@@ -205,6 +227,10 @@ export interface APIClient {
   getGitMainBranch(projectId: string): Promise<APIResult<GitMainBranchResult>>;
   getGitStatus(projectId: string): Promise<APIResult<GitStatusResult>>;
   initGitRepo(projectId: string): Promise<APIResult<GitInitResult>>;
+  
+  // Filesystem operations
+  listDirectory(projectId: string, path?: string): Promise<APIResult<DirectoryListResult>>;
+  readFile(projectId: string, path: string): Promise<APIResult<FileContentResult>>;
   
   // Event subscriptions (return cleanup functions)
   onTaskProgress(callback: (taskId: string, progress: unknown) => void): () => void;

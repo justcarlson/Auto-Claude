@@ -16,6 +16,8 @@ import type {
   GitMainBranchResult,
   GitStatusResult,
   GitInitResult,
+  DirectoryListResult,
+  FileContentResult,
 } from './types';
 
 export class ElectronAPIClient implements APIClient {
@@ -233,6 +235,14 @@ export class ElectronAPIClient implements APIClient {
 
   async initGitRepo(_projectId: string): Promise<APIResult<GitInitResult>> {
     return { success: false, error: 'Git init not available in Electron mode yet' };
+  }
+
+  async listDirectory(_projectId: string, _path?: string): Promise<APIResult<DirectoryListResult>> {
+    return { success: false, error: 'Directory listing not available in Electron mode yet' };
+  }
+
+  async readFile(_projectId: string, _path: string): Promise<APIResult<FileContentResult>> {
+    return { success: false, error: 'File reading not available in Electron mode yet' };
   }
 
   private mapResult<T>(result: { success: boolean; data?: unknown; error?: string }): APIResult<T> {

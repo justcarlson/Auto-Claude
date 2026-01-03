@@ -24,6 +24,8 @@ import type {
   GitMainBranchResult,
   GitStatusResult,
   GitInitResult,
+  DirectoryListResult,
+  FileContentResult,
 } from './types';
 
 /**
@@ -195,6 +197,18 @@ export class WebAPIClient implements APIClient {
 
   async initGitRepo(projectId: string): Promise<APIResult<GitInitResult>> {
     return this.post(`/projects/${projectId}/git/init`, {});
+  }
+
+  // ==========================================================================
+  // Filesystem Operations
+  // ==========================================================================
+
+  async listDirectory(projectId: string, path = ''): Promise<APIResult<DirectoryListResult>> {
+    return this.get(`/fs/list?project_id=${encodeURIComponent(projectId)}&path=${encodeURIComponent(path)}`);
+  }
+
+  async readFile(projectId: string, path: string): Promise<APIResult<FileContentResult>> {
+    return this.get(`/fs/read?project_id=${encodeURIComponent(projectId)}&path=${encodeURIComponent(path)}`);
   }
 
   // ==========================================================================

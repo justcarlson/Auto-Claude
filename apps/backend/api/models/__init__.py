@@ -2,6 +2,9 @@
 from .api_models import (
     AppSettings,
     AppSettingsUpdate,
+    DirectoryListResponse,
+    FileContentResponse,
+    FileNode,
     GitBranch,
     GitBranchesResponse,
     GitConflictInfo,
@@ -49,6 +52,9 @@ from .api_models import (
 __all__ = [
     "AppSettings",
     "AppSettingsUpdate",
+    "DirectoryListResponse",
+    "FileContentResponse",
+    "FileNode",
     "GitBranch",
     "GitBranchesResponse",
     "GitConflictInfo",

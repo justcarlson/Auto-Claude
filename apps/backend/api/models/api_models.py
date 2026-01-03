@@ -523,3 +523,34 @@ class GitInitResponse(BaseModel):
         default=False, description="Whether directory was already a repo"
     )
     message: str | None = Field(default=None, description="Status message")
+
+
+# =============================================================================
+# FILESYSTEM MODELS
+# =============================================================================
+
+
+class FileNode(BaseModel):
+    """Model for a file or directory node."""
+
+    name: str = Field(..., description="File or directory name")
+    path: str = Field(..., description="Path relative to project root")
+    type: str = Field(..., description="'file' or 'directory'")
+    size: int | None = Field(default=None, description="File size in bytes")
+
+
+class DirectoryListResponse(BaseModel):
+    """Response model for listing directory contents."""
+
+    nodes: list[FileNode] = Field(
+        default_factory=list, description="List of files and directories"
+    )
+
+
+class FileContentResponse(BaseModel):
+    """Response model for reading file content."""
+
+    path: str = Field(..., description="File path relative to project root")
+    content: str | None = Field(default=None, description="File content (if text)")
+    isBinary: bool = Field(default=False, description="Whether file is binary")
+    size: int = Field(default=0, description="File size in bytes")
