@@ -897,19 +897,30 @@ cd apps/frontend && npm run build:web
     [ ] components/project-settings/IntegrationSettings.tsx (lines 93, 98)
 ```
 
-#### 2.3 File System
+#### 2.3 File System (DONE - commit dd5c709)
 ```
-[ ] TEST: apps/backend/api/tests/routes/test_filesystem.py
-    [ ] test_list_directory_returns_nodes
-    [ ] test_list_directory_path_traversal_blocked
-    [ ] test_read_file_returns_content
-    [ ] test_read_file_outside_project_blocked
-    [ ] test_binary_file_handled
+[x] TEST: apps/backend/api/tests/routes/test_filesystem.py
+    [x] test_list_directory_returns_nodes
+    [x] test_list_directory_path_traversal_blocked
+    [x] test_read_file_returns_content
+    [x] test_read_file_outside_project_blocked
+    [x] test_binary_file_handled
+    [x] test_list_subdirectory
+    [x] test_list_nonexistent_directory_returns_404
+    [x] test_read_file_in_subdirectory
+    [x] test_read_nonexistent_file_returns_404
+    [x] test_read_directory_returns_400
+    [x] test_text_file_detected_correctly
 
-[ ] BACKEND: apps/backend/api/routes/filesystem.py
-    [ ] GET /api/fs/list?path=&project_id=
-    [ ] GET /api/fs/read?path=&project_id=
-    [ ] Security: Sandbox to project directory only
+[x] BACKEND: apps/backend/api/routes/filesystem.py
+    [x] GET /api/fs/list?path=&project_id=
+    [x] GET /api/fs/read?path=&project_id=
+    [x] Security: Sandbox to project directory only (PathTraversalError)
+
+[x] FRONTEND: apps/frontend/src/renderer/lib/api/
+    [x] types.ts - FileNode, DirectoryListResult, FileContentResult
+    [x] web-client.ts - listDirectory(), readFile()
+    [x] electron-client.ts - stub methods
 
 [ ] MIGRATE:
     [ ] stores/file-explorer-store.ts (line 95)
